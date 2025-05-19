@@ -2,34 +2,35 @@
 
 
 
-WG Working Group                                              Y. N. Here
-Internet-Draft                                    Your Organization Here
+WG Working Group                                               Y. T. Lai
+Internet-Draft                                       Ethereum Foundation
 Intended status: Informational                               19 May 2025
 Expires: 20 November 2025
 
 
-                           TODO - Your title
+                     Polynomial Commitment Schemes
                     draft-zkproof-polycommit-latest
 
 Abstract
 
-   TODO Abstract
+   This document describes the high-level interface of a polynomial
+   commitment scheme (PCS), a cryptographic primitive used in
+   constructing generic zk-SNARKs.  A PCS allows a prover to commit to a
+   polynomial, and later attest to its correct evaluation at a given
+   point.  Test vectors and reference implementations for popular
+   instantiations are provided in Appendix A.
 
 About This Document
 
    This note is to be removed before publishing as an RFC.
 
    The latest revision of this draft can be found at
-   https://example.com/LATEST.  Status information for this document may
-   be found at https://datatracker.ietf.org/doc/draft-zkproof-
-   polycommit/.
-
-   Discussion of this document takes place on the WG Working Group
-   mailing list (mailto:WG@example.com), which is archived at
-   https://example.com/WG.
+   https://therealyingtong.github.io/draft-zkproof-polycommit/draft-
+   zkproof-polycommit.html.  Status information for this document may be
+   found at https://datatracker.ietf.org/doc/draft-zkproof-polycommit/.
 
    Source for this draft and an issue tracker can be found at
-   https://github.com/USER/REPO.
+   https://github.com/therealyingtong/draft-zkproof-polycommit.
 
 Status of This Memo
 
@@ -57,58 +58,321 @@ Copyright Notice
    Provisions Relating to IETF Documents (https://trustee.ietf.org/
    license-info) in effect on the date of publication of this document.
    Please review these documents carefully, as they describe your rights
-   and restrictions with respect to this document.  Code Components
-   extracted from this document must include Revised BSD License text as
-   described in Section 4.e of the Trust Legal Provisions and are
-   provided without warranty as described in the Revised BSD License.
+   and restrictions with respect to this document.
 
 Table of Contents
 
    1.  Introduction
-   2.  Conventions and Definitions
+     1.1.  Generic interface
+       1.1.1.  setup
+       1.1.2.  commit
+       1.1.3.  open
+       1.1.4.  verify
+     1.2.  Batched setting
+       1.2.1.  batch_open
+       1.2.2.  batch_verify
+   2.  Concrete polynomial commitment schemes
    3.  Security Considerations
    4.  IANA Considerations
-   5.  Normative References
    Acknowledgments
+   Informative References
    Author's Address
 
 1.  Introduction
 
-   TODO Introduction
+   A polynomial commitment scheme (PCS) is a common building block in
+   the construction of modern generic zk-SNARKs (Fig 1).  It allows a
+   prover to commit to a polynomial, and later prove its correct
+   evaluation at a given point.  This is used to instantiate oracle
+   access to the prover's polynomial-encoded witness, by introducing a
+   cryptographic hardness assumption (e.g. discrete logarithm hardness).
 
-2.  Conventions and Definitions
+            ┌─────────────┐             ┌─────────────┐             ┌─────────────┐
+            │             │ polynomial  │             │ interactive │             │ non-interactive
+zerocheck   │ polynomial  │ identities  │ polynomial  │  argument   │ Fiat-Shamir │     argument    ────────────►│ interactive ├────────────►│ commitment  ├────────────►│ heuristic   ├─────────────────►
+            │ oracle proof│             │ scheme      │             │             │
+            │ (PIOP)      │             │ (PCS)       │             │             │
+            │             │             │             │             │             │
+            └─────────────┘             └─────────────┘             └─────────────┘ *Fig 1: The components of a modern zk-SNARK.*
 
-   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
-   "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
-   "OPTIONAL" in this document are to be interpreted as described in
-   BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all
-   capitals, as shown here.
+   A polynomial commitment scheme is parameterised over a finite field
+   WitnessField for its representation, and a (potentially identical)
+   finite field ChallengeField for its evaluation points.
+
+   NON-NORMATIVE NOTE: In small-field PCSes, challenges are usually
+   drawn from an extension field ChallengeField.
+
+1.1.  Generic interface
+
+   A polynomial commitment scheme provides an interface with the
+   following functions:
+
+1.1.1.  setup
+
+   On input the parameters security_bits, num_vars, degree_bounds, and
+   an OPTIONAL randomness generator rng, setup samples a public
+   CommitterKey and VerifierKey for the polynomial commitment scheme.
+   NON-NORMATIVE NOTE: This generalises over both trusted setups (SRS)
+   and transparent setups
+
+   fn setup(
+       security_bits: usize,
+       num_vars: usize,
+       degree_bounds: Vec<usize>,
+       rng: Option<Rng>,
+   ) -> (CommitterKey, VerifierKey)
+
+1.1.1.1.  Input:
+
+   *  security_bits: the desired number of bits of security
+
+   *  num_vars: the number of variables in the polynomial NON-NORMATIVE
+      NOTE: For univariate polynomials, num_vars = 1
+
+   *  degree_bounds: the upper bounds on the degree of each variable in
+      the polynomial; degree_bounds.len() MUST equal num_vars NON-
+      NORMATIVE NOTE: For multilinear polynomials, degree_bounds = 1 for
+      each variable
+
+   *  (OPTIONAL) rng: a randomness generator
+
+1.1.1.2.  Output:
+
+   *  ck: a committer key used in computing commitments and opening
+      proofs; this contains also the description of finite fields for
+      the witness WitnessField, as well as for the challenge
+      ChallengeField.
+
+   *  vk: a verifier key used in verifying opening proofs; this contains
+      also the description of finite fields for the witness
+      WitnessField, as well as for the challenge ChallengeField.
+
+1.1.2.  commit
+
+   On input the committer key ck, a polynomial poly, and an OPTIONAL
+   random blinding factor r, commit outputs a binding and optionally
+   hiding commitment com.
+
+   fn commit(
+       ck: CommitterKey,
+       poly: Polynomial<WitnessField>,
+       r: Option<WitnessField>
+   ) -> Commitment
+
+1.1.2.1.  Input:
+
+   *  ck: the committer key
+
+   *  poly: a polynomial with degree at most deg(X_i) = d_i ≤ D_i in
+      each variable
+
+   *  (OPTIONAL) r: a random element from the WitnessField; this can be
+      set to None if the commitment is non-hiding NON-NORMATIVE NOTE:
+      Zero-knowledge protocols often apply non-hiding polynomial
+      commitment schemes to a "masked" polynomial, instead of the actual
+      witness polynomial.  The caller is responsible for masking the
+      polynomial before providing it as input tocommit.
+
+1.1.2.2.  Output:
+
+   *  com: a binding and optionally hiding polynomial commitment to poly
+
+1.1.3.  open
+
+   On input the committer key ck, a polynomial poly, a commitment com to
+   the polynomial, the challenge point challenge, and the OPTIONAL
+   random blinding factor r, open outputs the evaluation eval =
+   poly(challenge), and an opening proof proof.  The opening proof
+   attests to the claim "com commits to a polynomial that evaluates to
+   eval at challenge".
+
+   fn open(
+       ck: CommitterKey,
+       poly: Polynomial<WitnessField>,
+       com: Commitment,
+       challenge: Challenge,
+       r: Option<WitnessField>
+   ) -> (ChallengeField, Proof)
+
+1.1.3.1.  Input:
+
+   *  ck: the committer key
+
+   *  poly: a polynomial with degree at most deg(X_i) = d_i ≤ D_i in
+      each variable
+
+   *  com: a commitment to poly
+
+   *  challenge: the evaluation point at which com will be opened; this
+      consists of num_vars elements from the ChallengeField NON-
+      NORMATIVE NOTE: In the non-interactive setting, the challenge is
+      derived from the commitment using the Fiat-Shamir transform.
+
+   *  (OPTIONAL) r: a random element from the WitnessField; this MUST
+      equal the r previously used in commit
+
+1.1.3.2.  Output:
+
+   *  eval: the evaluation of poly at the evaluation point challenge
+
+   *  proof: an opening proof attesting to the correctness of the
+      opening
+
+1.1.4.  verify
+
+   On input the verifier key vk, a polynomial commitment com, the
+   evaluation point challenge, the purported opening eval, and the
+   opening proof proof, verify checks the opening proof, and either
+   accepts or rejects it.
+
+   fn verify(
+       vk: VerifierKey,
+       com: Commitment,
+       challenge: Challenge,
+       eval: ChallengeField,
+       proof: Proof,
+   ) -> bool
+
+1.1.4.1.  Input:
+
+   *  vk: the verifier key
+
+   *  com: a polynomial commitment
+
+   *  challenge: the evaluation point at which com is opened
+
+   *  eval: the purported evaluation of the committed polynomial at
+      challenge
+
+   *  proof: the opening proof the claim "com commits to a polynomial
+      that evaluates to eval at challenge"
+
+1.1.4.2.  Output:
+
+   *  verify outputs 1 if the opening proof is valid, and 0 otherwise
+
+1.2.  Batched setting
+
+   _This section is NON-NORMATIVE._
+
+   Polynomial commitment schemes MAY support opening in a batched
+   setting.  In this setting, a single proof attests to the opening of
+   multiple polynomials at multiple challenges (possibly different sets
+   of challenges for each polynomial).
+
+   Common special cases of the batched setting include: - opening of a
+   single polynomial at multiple challenges; and - opening of multiple
+   polynomials at a single challenge
+
+1.2.1.  batch_open
+
+   On input the committer key ck, a vector of polynomials polys, a
+   vector of their commitments coms, a vector of challenge sets
+   challenges, and a vector of OPTIONAL random blinding factors rs,
+   batch_open outputs the evaluations at each challenge set
+   Vec<Vec<ChallengeField>> and a single opening proof BatchProof.
+
+   The opening proof attests to the claim that "com[i] commits to a
+   polynomial poly[i] that opens to evals[i][j] at challenges[i][j]",
+   for each index i in the batch of polynomials, and each index j in its
+   corresponding challenge set.
+
+   fn batch_open(
+       ck: CommitterKey,
+       polys: Vec<Polynomial<WitnessField>>,
+       coms: Vec<Commitment>,
+       challenges: Vec<Vec<Challenge>>,
+       rs: Vec<Option<ChallengeField>>
+   ) -> (Vec<Vec<ChallengeField>>, BatchProof)
+
+1.2.1.1.  Input:
+
+   *  ck: the committer key
+
+   *  polys: the batch of polynomials to open
+
+   *  coms: the commitments corresponding to polys; coms.len() MUST
+      equal polys.len()
+
+   *  challenges: the sets of challenge points at which to evaluate each
+      polynomial; challenges.len() MUST equal polys.len()
+
+   *  rs: the OPTIONAL random blinding factors used in each commitment;
+      rs.len() MUST equal polys.len()
+
+1.2.1.2.  Output:
+
+   *  evals: the evaluations of each polynomial at each challenge set;
+      evals.len() MUST equal polys.len(), and each evals[j].len() MUST
+      equal the corresponding challenges[j].len()
+
+   *  batch_proof: an opening proof for the batch opening claim
+
+1.2.2.  batch_verify
+
+   On input the verifier key vk, a vector of commitments coms, a vector
+   of challenge sets challenges, a vector of their purported
+   corresponding evaluations evals, and an opening proof BatchProof,
+   batch_verify checks the opening proof, and either accepts or rejects
+   it.
+
+   fn batch_verify(
+       vk: VerifierKey,
+       coms: Vec<Commitment>,
+       challenges: Vec<Vec<ChallengeField>>,
+       evals: Vec<Vec<ChallengeField>>,
+       proof: BatchProof,
+   ) -> bool
+
+1.2.2.1.  Input:
+
+   *  vk: the verifier key
+
+   *  coms: a vector of polynomial commitments
+
+   *  challenges: the sets of challenge points at which each commitment
+      was opened; challenges.len() MUST equal coms.len()
+
+   *  evals: the purported openings of each commitment at each challenge
+      set; evals.len() MUST equal coms.len(), and each evals[j].len()
+      MUST equal the corresponding challenges[j].len()
+
+   *  batch_proof: an opening proof for the batch opening claim
+
+1.2.2.2.  Output:
+
+   *  batch_verify outputs 1 if the opening proof is valid, and 0
+      otherwise
+
+2.  Concrete polynomial commitment schemes
 
 3.  Security Considerations
-
-   TODO Security
 
 4.  IANA Considerations
 
    This document has no IANA actions.
 
-5.  Normative References
-
-   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
-              Requirement Levels", BCP 14, RFC 2119,
-              DOI 10.17487/RFC2119, March 1997,
-              <https://www.rfc-editor.org/rfc/rfc2119>.
-
-   [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
-              2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
-              May 2017, <https://www.rfc-editor.org/rfc/rfc8174>.
-
 Acknowledgments
 
-   TODO acknowledge.
+   The authors thank Mary Maller, Pierre Daix-Moreux, Oskar Thorén, Alex
+   Kuzmin, and Manu Sporny, for reviewing a previous edition of this
+   specification.
+
+Informative References
+
+   [fiat-shamir]
+              "draft-orru-zkproofs-fiat-shamir",
+              <https://mmaker.github.io/spfs/draft-orru-zkproof-fiat-
+              shamir.html>.
+
+   [NISTCurves]
+              "Digital signature standard (DSS)", National Institute of
+              Standards and Technology (U.S.),
+              DOI 10.6028/nist.fips.186-4, 2013,
+              <https://doi.org/10.6028/nist.fips.186-4>.
 
 Author's Address
 
-   Your Name Here
-   Your Organization Here
-   Email: your.email@example.com
+   Ying Tong Lai
+   Ethereum Foundation
+   Email: yingtong.lai@gmail.com

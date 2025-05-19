@@ -4,15 +4,13 @@
 <meta charset="utf-8">
 <meta content="Common,Latin" name="scripts">
 <meta content="initial-scale=1.0" name="viewport">
-<title>TODO - Your title</title>
-<meta content="Your Name Here" name="author">
+<title>Polynomial Commitment Schemes</title>
+<meta content="Ying Tong Lai" name="author">
 <meta content="
-       TODO Abstract 
+       This document describes the high-level interface of a polynomial commitment scheme (PCS), a cryptographic primitive used in constructing generic zk-SNARKs. A PCS allows a prover to commit to a polynomial, and later attest to its correct evaluation at a given point. Test vectors and reference implementations for popular instantiations are provided in Appendix A. 
     " name="description">
 <meta content="xml2rfc 3.28.1" name="generator">
-<meta content="next generation" name="keyword">
-<meta content="unicorn" name="keyword">
-<meta content="sparkling distributed ledger" name="keyword">
+<meta content="zero-knowledge" name="keyword">
 <meta content="draft-zkproof-polycommit-latest" name="ietf.draft">
 <!-- Generator version information:
   xml2rfc 3.28.1
@@ -1045,11 +1043,11 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <table class="ears">
 <thead><tr>
 <td class="left">Internet-Draft</td>
-<td class="center">TODO - Abbreviation</td>
+<td class="center">PCS</td>
 <td class="right">May 2025</td>
 </tr></thead>
 <tfoot><tr>
-<td class="left">Here</td>
+<td class="left">Lai</td>
 <td class="center">Expires 20 November 2025</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
@@ -1072,16 +1070,16 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dt class="label-authors">Author:</dt>
 <dd class="authors">
 <div class="author">
-      <div class="author-name">Y. N. Here</div>
-<div class="org">Your Organization Here</div>
+      <div class="author-name">Y. T. Lai</div>
+<div class="org">Ethereum Foundation</div>
 </div>
 </dd>
 </dl>
 </div>
-<h1 id="title">TODO - Your title</h1>
+<h1 id="title">Polynomial Commitment Schemes</h1>
 <section id="section-abstract">
       <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
-<p id="section-abstract-1">TODO Abstract<a href="#section-abstract-1" class="pilcrow">¶</a></p>
+<p id="section-abstract-1">This document describes the high-level interface of a polynomial commitment scheme (PCS), a cryptographic primitive used in constructing generic zk-SNARKs. A PCS allows a prover to commit to a polynomial, and later attest to its correct evaluation at a given point. Test vectors and reference implementations for popular instantiations are provided in Appendix A.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
 </section>
 <section class="note rfcEditorRemove" id="section-note.1">
       <h2 id="name-about-this-document">
@@ -1089,14 +1087,10 @@ svg :is([fill="white"], [fill^="#fff"]) {
       </h2>
 <p id="section-note.1-1">This note is to be removed before publishing as an RFC.<a href="#section-note.1-1" class="pilcrow">¶</a></p>
 <p id="section-note.1-2">
-        The latest revision of this draft can be found at <span><a href="https://example.com/LATEST">https://example.com/LATEST</a></span>.
+        The latest revision of this draft can be found at <span><a href="https://therealyingtong.github.io/draft-zkproof-polycommit/draft-zkproof-polycommit.html">https://therealyingtong.github.io/draft-zkproof-polycommit/draft-zkproof-polycommit.html</a></span>.
         Status information for this document may be found at <span><a href="https://datatracker.ietf.org/doc/draft-zkproof-polycommit/">https://datatracker.ietf.org/doc/draft-zkproof-polycommit/</a></span>.<a href="#section-note.1-2" class="pilcrow">¶</a></p>
-<p id="section-note.1-3">
-        Discussion of this document takes place on the
-        WG Working Group mailing list (<span><a href="mailto:WG@example.com">mailto:WG@example.com</a></span>),
-        which is archived at <span><a href="https://example.com/WG">https://example.com/WG</a></span>.<a href="#section-note.1-3" class="pilcrow">¶</a></p>
-<p id="section-note.1-4">Source for this draft and an issue tracker can be found at
-        <span><a href="https://github.com/USER/REPO">https://github.com/USER/REPO</a></span>.<a href="#section-note.1-4" class="pilcrow">¶</a></p>
+<p id="section-note.1-3">Source for this draft and an issue tracker can be found at
+        <span><a href="https://github.com/therealyingtong/draft-zkproof-polycommit">https://github.com/therealyingtong/draft-zkproof-polycommit</a></span>.<a href="#section-note.1-3" class="pilcrow">¶</a></p>
 </section>
 <div id="status-of-memo">
 <section id="section-boilerplate.1">
@@ -1134,10 +1128,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
             (<span><a href="https://trustee.ietf.org/license-info">https://trustee.ietf.org/license-info</a></span>) in effect on the date of
             publication of this document. Please review these documents
             carefully, as they describe your rights and restrictions with
-            respect to this document. Code Components extracted from this
-            document must include Revised BSD License text as described in
-            Section 4.e of the Trust Legal Provisions and are provided without
-            warranty as described in the Revised BSD License.<a href="#section-boilerplate.2-2" class="pilcrow">¶</a></p>
+            respect to this document.<a href="#section-boilerplate.2-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="toc">
@@ -1147,25 +1138,55 @@ svg :is([fill="white"], [fill^="#fff"]) {
         </h2>
 <nav class="toc"><ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1">
-            <p id="section-toc.1-1.1.1" class="keepWithNext"><a href="#section-1" class="auto internal xref">1</a>.  <a href="#name-introduction" class="internal xref">Introduction</a></p>
+            <p id="section-toc.1-1.1.1"><a href="#section-1" class="auto internal xref">1</a>.  <a href="#name-introduction" class="internal xref">Introduction</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.1">
+                <p id="section-toc.1-1.1.2.1.1"><a href="#section-1.1" class="auto internal xref">1.1</a>.  <a href="#name-generic-interface" class="internal xref">Generic interface</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.1.2.1">
+                    <p id="section-toc.1-1.1.2.1.2.1.1" class="keepWithNext"><a href="#section-1.1.1" class="auto internal xref">1.1.1</a>.  <a href="#name-setup" class="internal xref"><code>setup</code></a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.1.2.2">
+                    <p id="section-toc.1-1.1.2.1.2.2.1" class="keepWithNext"><a href="#section-1.1.2" class="auto internal xref">1.1.2</a>.  <a href="#name-commit" class="internal xref"><code>commit</code></a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.1.2.3">
+                    <p id="section-toc.1-1.1.2.1.2.3.1" class="keepWithNext"><a href="#section-1.1.3" class="auto internal xref">1.1.3</a>.  <a href="#name-open" class="internal xref"><code>open</code></a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.1.2.4">
+                    <p id="section-toc.1-1.1.2.1.2.4.1"><a href="#section-1.1.4" class="auto internal xref">1.1.4</a>.  <a href="#name-verify" class="internal xref"><code>verify</code></a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.2">
+                <p id="section-toc.1-1.1.2.2.1"><a href="#section-1.2" class="auto internal xref">1.2</a>.  <a href="#name-batched-setting" class="internal xref">Batched setting</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.2.2.1">
+                    <p id="section-toc.1-1.1.2.2.2.1.1"><a href="#section-1.2.1" class="auto internal xref">1.2.1</a>.  <a href="#name-batch_open" class="internal xref"><code>batch_open</code></a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.2.2.2">
+                    <p id="section-toc.1-1.1.2.2.2.2.1"><a href="#section-1.2.2" class="auto internal xref">1.2.2</a>.  <a href="#name-batch_verify" class="internal xref"><code>batch_verify</code></a></p>
+</li>
+                </ul>
+</li>
+            </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2">
-            <p id="section-toc.1-1.2.1" class="keepWithNext"><a href="#section-2" class="auto internal xref">2</a>.  <a href="#name-conventions-and-definitions" class="internal xref">Conventions and Definitions</a></p>
+            <p id="section-toc.1-1.2.1"><a href="#section-2" class="auto internal xref">2</a>.  <a href="#name-concrete-polynomial-commitm" class="internal xref">Concrete polynomial commitment schemes</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3">
-            <p id="section-toc.1-1.3.1" class="keepWithNext"><a href="#section-3" class="auto internal xref">3</a>.  <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
+            <p id="section-toc.1-1.3.1"><a href="#section-3" class="auto internal xref">3</a>.  <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4">
             <p id="section-toc.1-1.4.1"><a href="#section-4" class="auto internal xref">4</a>.  <a href="#name-iana-considerations" class="internal xref">IANA Considerations</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5">
-            <p id="section-toc.1-1.5.1"><a href="#section-5" class="auto internal xref">5</a>.  <a href="#name-normative-references" class="internal xref">Normative References</a></p>
+            <p id="section-toc.1-1.5.1"><a href="#section-5" class="auto internal xref"></a><a href="#name-acknowledgments" class="internal xref">Acknowledgments</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6">
-            <p id="section-toc.1-1.6.1"><a href="#appendix-A" class="auto internal xref"></a><a href="#name-acknowledgments" class="internal xref">Acknowledgments</a></p>
+            <p id="section-toc.1-1.6.1"><a href="#section-6" class="auto internal xref"></a><a href="#name-informative-references" class="internal xref">Informative References</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7">
-            <p id="section-toc.1-1.7.1"><a href="#appendix-B" class="auto internal xref"></a><a href="#name-authors-address" class="internal xref">Author's Address</a></p>
+            <p id="section-toc.1-1.7.1"><a href="#appendix-A" class="auto internal xref"></a><a href="#name-authors-address" class="internal xref">Author's Address</a></p>
 </li>
         </ul>
 </nav>
@@ -1176,26 +1197,387 @@ svg :is([fill="white"], [fill^="#fff"]) {
       <h2 id="name-introduction">
 <a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
       </h2>
-<p id="section-1-1">TODO Introduction<a href="#section-1-1" class="pilcrow">¶</a></p>
+<p id="section-1-1">A polynomial commitment scheme (PCS) is a common building block  in the construction of modern generic zk-SNARKs (Fig 1). It allows a prover to commit to a polynomial, and later prove its correct evaluation at a given point. This is used to instantiate oracle access to the prover's polynomial-encoded witness, by introducing a cryptographic hardness assumption (e.g. discrete logarithm hardness).<a href="#section-1-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-1-2">
+<pre>
+            ┌─────────────┐             ┌─────────────┐             ┌─────────────┐
+            │             │ polynomial  │             │ interactive │             │ non-interactive
+zerocheck   │ polynomial  │ identities  │ polynomial  │  argument   │ Fiat-Shamir │     argument    ────────────►│ interactive ├────────────►│ commitment  ├────────────►│ heuristic   ├─────────────────►
+            │ oracle proof│             │ scheme      │             │             │
+            │ (PIOP)      │             │ (PCS)       │             │             │
+            │             │             │             │             │             │
+            └─────────────┘             └─────────────┘             └─────────────┘ *Fig 1: The components of a modern zk-SNARK.*
+</pre><a href="#section-1-2" class="pilcrow">¶</a>
+</div>
+<p id="section-1-3">A polynomial commitment scheme is parameterised over a finite field <code>WitnessField</code> for its representation, and a (potentially identical) finite  field <code>ChallengeField</code> for its evaluation points.<a href="#section-1-3" class="pilcrow">¶</a></p>
+<p id="section-1-4">NON-NORMATIVE NOTE: In small-field PCSes, challenges are usually drawn from an extension field <code>ChallengeField</code>.<a href="#section-1-4" class="pilcrow">¶</a></p>
+<div id="generic-interface">
+<section id="section-1.1">
+        <h3 id="name-generic-interface">
+<a href="#section-1.1" class="section-number selfRef">1.1. </a><a href="#name-generic-interface" class="section-name selfRef">Generic interface</a>
+        </h3>
+<p id="section-1.1-1">A polynomial commitment scheme provides an interface with the following functions:<a href="#section-1.1-1" class="pilcrow">¶</a></p>
+<div id="setup">
+<section id="section-1.1.1">
+          <h4 id="name-setup">
+<a href="#section-1.1.1" class="section-number selfRef">1.1.1. </a><a href="#name-setup" class="section-name selfRef"><code>setup</code></a>
+          </h4>
+<p id="section-1.1.1-1">On input the parameters <code>security_bits</code>, <code>num_vars</code>, <code>degree_bounds</code>, and an OPTIONAL randomness generator <code>rng</code>, <code>setup</code> samples a public <code>CommitterKey</code> and <code>VerifierKey</code> for the polynomial commitment scheme.
+  NON-NORMATIVE NOTE: This generalises over both trusted setups (SRS) and transparent setups<a href="#section-1.1.1-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-1.1.1-2">
+<pre>
+fn setup(
+    security_bits: usize,
+    num_vars: usize,
+    degree_bounds: Vec&lt;usize&gt;,
+    rng: Option&lt;Rng&gt;,
+) -&gt; (CommitterKey, VerifierKey)
+</pre><a href="#section-1.1.1-2" class="pilcrow">¶</a>
+</div>
+<div id="input">
+<section id="section-1.1.1.1">
+            <h5 id="name-input">
+<a href="#section-1.1.1.1" class="section-number selfRef">1.1.1.1. </a><a href="#name-input" class="section-name selfRef">Input:</a>
+            </h5>
+<ul class="normal">
+<li class="normal" id="section-1.1.1.1-1.1">
+                <p id="section-1.1.1.1-1.1.1"><code>security_bits</code>: the desired number of bits of security<a href="#section-1.1.1.1-1.1.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-1.1.1.1-1.2">
+                <p id="section-1.1.1.1-1.2.1"><code>num_vars</code>: the number of variables in the polynomial
+NON-NORMATIVE NOTE: For univariate polynomials, num_vars = 1<a href="#section-1.1.1.1-1.2.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-1.1.1.1-1.3">
+                <p id="section-1.1.1.1-1.3.1"><code>degree_bounds</code>: the upper bounds on the degree of each variable in the polynomial; <code>degree_bounds.len()</code> MUST equal <code>num_vars</code>
+NON-NORMATIVE NOTE: For multilinear polynomials, degree_bounds = 1 for each variable<a href="#section-1.1.1.1-1.3.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-1.1.1.1-1.4">
+                <p id="section-1.1.1.1-1.4.1">(OPTIONAL) <code>rng</code>: a randomness generator<a href="#section-1.1.1.1-1.4.1" class="pilcrow">¶</a></p>
+</li>
+            </ul>
 </section>
 </div>
-<div id="conventions-and-definitions">
+<div id="output">
+<section id="section-1.1.1.2">
+            <h5 id="name-output">
+<a href="#section-1.1.1.2" class="section-number selfRef">1.1.1.2. </a><a href="#name-output" class="section-name selfRef">Output:</a>
+            </h5>
+<ul class="normal">
+<li class="normal" id="section-1.1.1.2-1.1">
+                <p id="section-1.1.1.2-1.1.1"><code>ck</code>: a committer key used in computing commitments and opening proofs; this contains also the description of finite fields for the witness <code>WitnessField</code>, as well as for the challenge <code>ChallengeField</code>.<a href="#section-1.1.1.2-1.1.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-1.1.1.2-1.2">
+                <p id="section-1.1.1.2-1.2.1"><code>vk</code>: a verifier key used in verifying opening proofs; this contains also the description of finite fields for the witness <code>WitnessField</code>, as well as for the challenge <code>ChallengeField</code>.<a href="#section-1.1.1.2-1.2.1" class="pilcrow">¶</a></p>
+</li>
+            </ul>
+</section>
+</div>
+</section>
+</div>
+<div id="commit">
+<section id="section-1.1.2">
+          <h4 id="name-commit">
+<a href="#section-1.1.2" class="section-number selfRef">1.1.2. </a><a href="#name-commit" class="section-name selfRef"><code>commit</code></a>
+          </h4>
+<p id="section-1.1.2-1">On input the committer key <code>ck</code>, a polynomial <code>poly</code>, and an OPTIONAL random blinding factor <code>r</code>, <code>commit</code> outputs a binding and optionally hiding commitment <code>com</code>.<a href="#section-1.1.2-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-1.1.2-2">
+<pre>
+fn commit(
+    ck: CommitterKey,
+    poly: Polynomial&lt;WitnessField&gt;,
+    r: Option&lt;WitnessField&gt;
+) -&gt; Commitment
+</pre><a href="#section-1.1.2-2" class="pilcrow">¶</a>
+</div>
+<div id="input-1">
+<section id="section-1.1.2.1">
+            <h5 id="name-input-2">
+<a href="#section-1.1.2.1" class="section-number selfRef">1.1.2.1. </a><a href="#name-input-2" class="section-name selfRef">Input:</a>
+            </h5>
+<ul class="normal">
+<li class="normal" id="section-1.1.2.1-1.1">
+                <p id="section-1.1.2.1-1.1.1"><code>ck</code>: the committer key<a href="#section-1.1.2.1-1.1.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-1.1.2.1-1.2">
+                <p id="section-1.1.2.1-1.2.1"><code>poly</code>: a polynomial with degree at most <code>deg(X_i) = d_i ≤ D_i</code> in each variable<a href="#section-1.1.2.1-1.2.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-1.1.2.1-1.3">
+                <p id="section-1.1.2.1-1.3.1">(OPTIONAL) <code>r</code>: a random element from the <code>WitnessField</code>; this can be set to <code>None</code> if the commitment is non-hiding
+  NON-NORMATIVE NOTE: Zero-knowledge protocols often apply non-hiding polynomial commitment schemes to a "masked" polynomial, instead of the actual witness polynomial. The caller is responsible for masking the polynomial before providing it as input to<code>commit</code>.<a href="#section-1.1.2.1-1.3.1" class="pilcrow">¶</a></p>
+</li>
+            </ul>
+</section>
+</div>
+<div id="output-1">
+<section id="section-1.1.2.2">
+            <h5 id="name-output-2">
+<a href="#section-1.1.2.2" class="section-number selfRef">1.1.2.2. </a><a href="#name-output-2" class="section-name selfRef">Output:</a>
+            </h5>
+<ul class="normal">
+<li class="normal" id="section-1.1.2.2-1.1">
+                <p id="section-1.1.2.2-1.1.1"><code>com</code>: a binding and optionally hiding polynomial commitment to <code>poly</code><a href="#section-1.1.2.2-1.1.1" class="pilcrow">¶</a></p>
+</li>
+            </ul>
+</section>
+</div>
+</section>
+</div>
+<div id="open">
+<section id="section-1.1.3">
+          <h4 id="name-open">
+<a href="#section-1.1.3" class="section-number selfRef">1.1.3. </a><a href="#name-open" class="section-name selfRef"><code>open</code></a>
+          </h4>
+<p id="section-1.1.3-1">On input the committer key <code>ck</code>, a polynomial <code>poly</code>, a commitment <code>com</code> to the polynomial, the challenge point <code>challenge</code>, and the OPTIONAL random blinding factor <code>r</code>, <code>open</code> outputs the evaluation <code>eval = poly(challenge)</code>, and an opening proof <code>proof</code>. The opening proof attests to the claim "<code>com</code> commits to a polynomial that evaluates to <code>eval</code> at <code>challenge</code>".<a href="#section-1.1.3-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-1.1.3-2">
+<pre>
+fn open(
+    ck: CommitterKey,
+    poly: Polynomial&lt;WitnessField&gt;,
+    com: Commitment,
+    challenge: Challenge,
+    r: Option&lt;WitnessField&gt;
+) -&gt; (ChallengeField, Proof)
+</pre><a href="#section-1.1.3-2" class="pilcrow">¶</a>
+</div>
+<div id="input-2">
+<section id="section-1.1.3.1">
+            <h5 id="name-input-3">
+<a href="#section-1.1.3.1" class="section-number selfRef">1.1.3.1. </a><a href="#name-input-3" class="section-name selfRef">Input:</a>
+            </h5>
+<ul class="normal">
+<li class="normal" id="section-1.1.3.1-1.1">
+                <p id="section-1.1.3.1-1.1.1"><code>ck</code>: the committer key<a href="#section-1.1.3.1-1.1.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-1.1.3.1-1.2">
+                <p id="section-1.1.3.1-1.2.1"><code>poly</code>: a polynomial with degree at most <code>deg(X_i) = d_i ≤ D_i</code> in each variable<a href="#section-1.1.3.1-1.2.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-1.1.3.1-1.3">
+                <p id="section-1.1.3.1-1.3.1"><code>com</code>: a commitment to <code>poly</code><a href="#section-1.1.3.1-1.3.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-1.1.3.1-1.4">
+                <p id="section-1.1.3.1-1.4.1"><code>challenge</code>: the evaluation point at which <code>com</code> will be opened; this consists of <code>num_vars</code> elements from the <code>ChallengeField</code>
+  NON-NORMATIVE NOTE: In the non-interactive setting, the challenge is derived from the commitment using the Fiat-Shamir transform.<a href="#section-1.1.3.1-1.4.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-1.1.3.1-1.5">
+                <p id="section-1.1.3.1-1.5.1">(OPTIONAL) <code>r</code>: a random element from the <code>WitnessField</code>; this MUST equal the <code>r</code> previously used in <code>commit</code><a href="#section-1.1.3.1-1.5.1" class="pilcrow">¶</a></p>
+</li>
+            </ul>
+</section>
+</div>
+<div id="output-2">
+<section id="section-1.1.3.2">
+            <h5 id="name-output-3">
+<a href="#section-1.1.3.2" class="section-number selfRef">1.1.3.2. </a><a href="#name-output-3" class="section-name selfRef">Output:</a>
+            </h5>
+<ul class="normal">
+<li class="normal" id="section-1.1.3.2-1.1">
+                <p id="section-1.1.3.2-1.1.1"><code>eval</code>: the evaluation of <code>poly</code> at the evaluation point <code>challenge</code><a href="#section-1.1.3.2-1.1.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-1.1.3.2-1.2">
+                <p id="section-1.1.3.2-1.2.1"><code>proof</code>: an opening proof attesting to the correctness of the opening<a href="#section-1.1.3.2-1.2.1" class="pilcrow">¶</a></p>
+</li>
+            </ul>
+</section>
+</div>
+</section>
+</div>
+<div id="verify">
+<section id="section-1.1.4">
+          <h4 id="name-verify">
+<a href="#section-1.1.4" class="section-number selfRef">1.1.4. </a><a href="#name-verify" class="section-name selfRef"><code>verify</code></a>
+          </h4>
+<p id="section-1.1.4-1">On input the verifier key <code>vk</code>, a polynomial commitment <code>com</code>, the evaluation point <code>challenge</code>, the purported opening <code>eval</code>, and the opening proof <code>proof</code>, <code>verify</code>  checks the opening proof, and either accepts or rejects it.<a href="#section-1.1.4-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-1.1.4-2">
+<pre>
+fn verify(
+    vk: VerifierKey,
+    com: Commitment,
+    challenge: Challenge,
+    eval: ChallengeField,
+    proof: Proof,
+) -&gt; bool
+</pre><a href="#section-1.1.4-2" class="pilcrow">¶</a>
+</div>
+<div id="input-3">
+<section id="section-1.1.4.1">
+            <h5 id="name-input-4">
+<a href="#section-1.1.4.1" class="section-number selfRef">1.1.4.1. </a><a href="#name-input-4" class="section-name selfRef">Input:</a>
+            </h5>
+<ul class="normal">
+<li class="normal" id="section-1.1.4.1-1.1">
+                <p id="section-1.1.4.1-1.1.1"><code>vk</code>: the verifier key<a href="#section-1.1.4.1-1.1.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-1.1.4.1-1.2">
+                <p id="section-1.1.4.1-1.2.1"><code>com</code>: a polynomial commitment<a href="#section-1.1.4.1-1.2.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-1.1.4.1-1.3">
+                <p id="section-1.1.4.1-1.3.1"><code>challenge</code>: the evaluation point at which <code>com</code> is opened<a href="#section-1.1.4.1-1.3.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-1.1.4.1-1.4">
+                <p id="section-1.1.4.1-1.4.1"><code>eval</code>: the purported evaluation of the committed polynomial at <code>challenge</code><a href="#section-1.1.4.1-1.4.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-1.1.4.1-1.5">
+                <p id="section-1.1.4.1-1.5.1"><code>proof</code>: the opening proof the claim "<code>com</code> commits to a polynomial that evaluates to <code>eval</code> at <code>challenge</code>"<a href="#section-1.1.4.1-1.5.1" class="pilcrow">¶</a></p>
+</li>
+            </ul>
+</section>
+</div>
+<div id="output-3">
+<section id="section-1.1.4.2">
+            <h5 id="name-output-4">
+<a href="#section-1.1.4.2" class="section-number selfRef">1.1.4.2. </a><a href="#name-output-4" class="section-name selfRef">Output:</a>
+            </h5>
+<ul class="normal">
+<li class="normal" id="section-1.1.4.2-1.1">
+                <p id="section-1.1.4.2-1.1.1"><code>verify</code> outputs <code>1</code> if the opening proof is valid, and <code>0</code> otherwise<a href="#section-1.1.4.2-1.1.1" class="pilcrow">¶</a></p>
+</li>
+            </ul>
+</section>
+</div>
+</section>
+</div>
+</section>
+</div>
+<div id="batched-setting">
+<section id="section-1.2">
+        <h3 id="name-batched-setting">
+<a href="#section-1.2" class="section-number selfRef">1.2. </a><a href="#name-batched-setting" class="section-name selfRef">Batched setting</a>
+        </h3>
+<p id="section-1.2-1"><em>This section is NON-NORMATIVE.</em><a href="#section-1.2-1" class="pilcrow">¶</a></p>
+<p id="section-1.2-2">Polynomial commitment schemes MAY support opening in a batched setting. In this setting, a single proof attests to the opening of multiple polynomials at multiple challenges (possibly different sets of challenges for each polynomial).<a href="#section-1.2-2" class="pilcrow">¶</a></p>
+<p id="section-1.2-3">Common special cases of the batched setting include:
+- opening of a single polynomial at multiple challenges; and
+- opening of multiple polynomials at a single challenge<a href="#section-1.2-3" class="pilcrow">¶</a></p>
+<div id="batchopen">
+<section id="section-1.2.1">
+          <h4 id="name-batch_open">
+<a href="#section-1.2.1" class="section-number selfRef">1.2.1. </a><a href="#name-batch_open" class="section-name selfRef"><code>batch_open</code></a>
+          </h4>
+<p id="section-1.2.1-1">On input the committer key <code>ck</code>, a vector of polynomials <code>polys</code>, a vector of their commitments <code>coms</code>, a vector of challenge sets <code>challenges</code>, and a vector of OPTIONAL random blinding factors <code>rs</code>, <code>batch_open</code> outputs the evaluations at each challenge set <code>Vec&lt;Vec&lt;ChallengeField&gt;&gt;</code> and a single opening proof <code>BatchProof</code>.<a href="#section-1.2.1-1" class="pilcrow">¶</a></p>
+<p id="section-1.2.1-2">The opening proof attests to the claim that "<code>com[i]</code> commits to a polynomial <code>poly[i]</code> that opens to <code>evals[i][j]</code> at <code>challenges[i][j]</code>", for each index <code>i</code> in the batch of polynomials, and each index <code>j</code> in its corresponding challenge set.<a href="#section-1.2.1-2" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-1.2.1-3">
+<pre>
+fn batch_open(
+    ck: CommitterKey,
+    polys: Vec&lt;Polynomial&lt;WitnessField&gt;&gt;,
+    coms: Vec&lt;Commitment&gt;,
+    challenges: Vec&lt;Vec&lt;Challenge&gt;&gt;,
+    rs: Vec&lt;Option&lt;ChallengeField&gt;&gt;
+) -&gt; (Vec&lt;Vec&lt;ChallengeField&gt;&gt;, BatchProof)
+</pre><a href="#section-1.2.1-3" class="pilcrow">¶</a>
+</div>
+<div id="input-4">
+<section id="section-1.2.1.1">
+            <h5 id="name-input-5">
+<a href="#section-1.2.1.1" class="section-number selfRef">1.2.1.1. </a><a href="#name-input-5" class="section-name selfRef">Input:</a>
+            </h5>
+<ul class="normal">
+<li class="normal" id="section-1.2.1.1-1.1">
+                <p id="section-1.2.1.1-1.1.1"><code>ck</code>: the committer key<a href="#section-1.2.1.1-1.1.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-1.2.1.1-1.2">
+                <p id="section-1.2.1.1-1.2.1"><code>polys</code>: the batch of polynomials to open<a href="#section-1.2.1.1-1.2.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-1.2.1.1-1.3">
+                <p id="section-1.2.1.1-1.3.1"><code>coms</code>: the commitments corresponding to <code>polys</code>; <code>coms.len()</code> MUST equal <code>polys.len()</code><a href="#section-1.2.1.1-1.3.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-1.2.1.1-1.4">
+                <p id="section-1.2.1.1-1.4.1"><code>challenges</code>: the sets of challenge points at which to evaluate each polynomial; <code>challenges.len()</code> MUST equal <code>polys.len()</code><a href="#section-1.2.1.1-1.4.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-1.2.1.1-1.5">
+                <p id="section-1.2.1.1-1.5.1"><code>rs</code>: the OPTIONAL random blinding factors used in each commitment; <code>rs.len()</code> MUST equal <code>polys.len()</code><a href="#section-1.2.1.1-1.5.1" class="pilcrow">¶</a></p>
+</li>
+            </ul>
+</section>
+</div>
+<div id="output-4">
+<section id="section-1.2.1.2">
+            <h5 id="name-output-5">
+<a href="#section-1.2.1.2" class="section-number selfRef">1.2.1.2. </a><a href="#name-output-5" class="section-name selfRef">Output:</a>
+            </h5>
+<ul class="normal">
+<li class="normal" id="section-1.2.1.2-1.1">
+                <p id="section-1.2.1.2-1.1.1"><code>evals</code>: the evaluations of each polynomial at each challenge set; <code>evals.len()</code> MUST equal <code>polys.len()</code>, and each <code>evals[j].len()</code> MUST equal the corresponding <code>challenges[j].len()</code><a href="#section-1.2.1.2-1.1.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-1.2.1.2-1.2">
+                <p id="section-1.2.1.2-1.2.1"><code>batch_proof</code>: an opening proof for the batch opening claim<a href="#section-1.2.1.2-1.2.1" class="pilcrow">¶</a></p>
+</li>
+            </ul>
+</section>
+</div>
+</section>
+</div>
+<div id="batchverify">
+<section id="section-1.2.2">
+          <h4 id="name-batch_verify">
+<a href="#section-1.2.2" class="section-number selfRef">1.2.2. </a><a href="#name-batch_verify" class="section-name selfRef"><code>batch_verify</code></a>
+          </h4>
+<p id="section-1.2.2-1">On input the verifier key <code>vk</code>, a vector of commitments <code>coms</code>, a vector of challenge sets <code>challenges</code>, a vector of their purported corresponding evaluations <code>evals</code>, and an opening proof <code>BatchProof</code>, <code>batch_verify</code> checks the opening proof, and either accepts or rejects it.<a href="#section-1.2.2-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-1.2.2-2">
+<pre>
+fn batch_verify(
+    vk: VerifierKey,
+    coms: Vec&lt;Commitment&gt;,
+    challenges: Vec&lt;Vec&lt;ChallengeField&gt;&gt;,
+    evals: Vec&lt;Vec&lt;ChallengeField&gt;&gt;,
+    proof: BatchProof,
+) -&gt; bool
+</pre><a href="#section-1.2.2-2" class="pilcrow">¶</a>
+</div>
+<div id="input-5">
+<section id="section-1.2.2.1">
+            <h5 id="name-input-6">
+<a href="#section-1.2.2.1" class="section-number selfRef">1.2.2.1. </a><a href="#name-input-6" class="section-name selfRef">Input:</a>
+            </h5>
+<ul class="normal">
+<li class="normal" id="section-1.2.2.1-1.1">
+                <p id="section-1.2.2.1-1.1.1"><code>vk</code>: the verifier key<a href="#section-1.2.2.1-1.1.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-1.2.2.1-1.2">
+                <p id="section-1.2.2.1-1.2.1"><code>coms</code>: a vector of polynomial commitments<a href="#section-1.2.2.1-1.2.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-1.2.2.1-1.3">
+                <p id="section-1.2.2.1-1.3.1"><code>challenges</code>: the sets of challenge points at which each commitment was opened; <code>challenges.len()</code> MUST equal <code>coms.len()</code><a href="#section-1.2.2.1-1.3.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-1.2.2.1-1.4">
+                <p id="section-1.2.2.1-1.4.1"><code>evals</code>: the purported openings of each commitment at each challenge set; <code>evals.len()</code> MUST equal <code>coms.len()</code>, and each <code>evals[j].len()</code> MUST equal the corresponding <code>challenges[j].len()</code><a href="#section-1.2.2.1-1.4.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-1.2.2.1-1.5">
+                <p id="section-1.2.2.1-1.5.1"><code>batch_proof</code>: an opening proof for the batch opening claim<a href="#section-1.2.2.1-1.5.1" class="pilcrow">¶</a></p>
+</li>
+            </ul>
+</section>
+</div>
+<div id="output-5">
+<section id="section-1.2.2.2">
+            <h5 id="name-output-6">
+<a href="#section-1.2.2.2" class="section-number selfRef">1.2.2.2. </a><a href="#name-output-6" class="section-name selfRef">Output:</a>
+            </h5>
+<ul class="normal">
+<li class="normal" id="section-1.2.2.2-1.1">
+                <p id="section-1.2.2.2-1.1.1"><code>batch_verify</code> outputs <code>1</code> if the opening proof is valid, and <code>0</code> otherwise<a href="#section-1.2.2.2-1.1.1" class="pilcrow">¶</a></p>
+</li>
+            </ul>
+</section>
+</div>
+</section>
+</div>
+</section>
+</div>
+</section>
+</div>
+<div id="concrete-polynomial-commitment-schemes">
 <section id="section-2">
-      <h2 id="name-conventions-and-definitions">
-<a href="#section-2" class="section-number selfRef">2. </a><a href="#name-conventions-and-definitions" class="section-name selfRef">Conventions and Definitions</a>
-      </h2>
-<p id="section-2-1">The key words "<span class="bcp14">MUST</span>", "<span class="bcp14">MUST NOT</span>", "<span class="bcp14">REQUIRED</span>", "<span class="bcp14">SHALL</span>", "<span class="bcp14">SHALL NOT</span>", "<span class="bcp14">SHOULD</span>", "<span class="bcp14">SHOULD NOT</span>", "<span class="bcp14">RECOMMENDED</span>", "<span class="bcp14">NOT RECOMMENDED</span>",
-"<span class="bcp14">MAY</span>", and "<span class="bcp14">OPTIONAL</span>" in this document are to be interpreted as
-described in BCP 14 <span>[<a href="#RFC2119" class="cite xref">RFC2119</a>]</span> <span>[<a href="#RFC8174" class="cite xref">RFC8174</a>]</span> when, and only when, they
-appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶</a></p>
+      <h2 id="name-concrete-polynomial-commitm">
+<a href="#section-2" class="section-number selfRef">2. </a><a href="#name-concrete-polynomial-commitm" class="section-name selfRef">Concrete polynomial commitment schemes</a>
+    </h2>
 </section>
 </div>
 <div id="security-considerations">
 <section id="section-3">
       <h2 id="name-security-considerations">
 <a href="#section-3" class="section-number selfRef">3. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
-      </h2>
-<p id="section-3-1">TODO Security<a href="#section-3-1" class="pilcrow">¶</a></p>
+    </h2>
 </section>
 </div>
 <div id="iana-considerations">
@@ -1206,42 +1588,42 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
 <p id="section-4-1">This document has no IANA actions.<a href="#section-4-1" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="sec-normative-references">
+<div id="acknowledgments">
 <section id="section-5">
-      <h2 id="name-normative-references">
-<a href="#section-5" class="section-number selfRef">5. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
+      <h2 id="name-acknowledgments">
+<a href="#name-acknowledgments" class="section-name selfRef">Acknowledgments</a>
+      </h2>
+<p id="section-5-1">The authors thank Mary Maller, Pierre Daix-Moreux, Oskar Thorén, Alex Kuzmin, and Manu Sporny, for reviewing a previous edition of this specification.<a href="#section-5-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="sec-informative-references">
+<section id="section-6">
+      <h2 id="name-informative-references">
+<a href="#name-informative-references" class="section-name selfRef">Informative References</a>
       </h2>
 <dl class="references">
-<dt id="RFC2119">[RFC2119]</dt>
+<dt id="fiat-shamir">[fiat-shamir]</dt>
       <dd>
-<span class="refAuthor">Bradner, S.</span>, <span class="refTitle">"Key words for use in RFCs to Indicate Requirement Levels"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 2119</span>, <span class="seriesInfo">DOI 10.17487/RFC2119</span>, <time datetime="1997-03" class="refDate">March 1997</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc2119">https://www.rfc-editor.org/rfc/rfc2119</a>&gt;</span>. </dd>
+<span class="refTitle">"draft-orru-zkproofs-fiat-shamir"</span>, <span>&lt;<a href="https://mmaker.github.io/spfs/draft-orru-zkproof-fiat-shamir.html">https://mmaker.github.io/spfs/draft-orru-zkproof-fiat-shamir.html</a>&gt;</span>. </dd>
 <dd class="break"></dd>
-<dt id="RFC8174">[RFC8174]</dt>
+<dt id="NISTCurves">[NISTCurves]</dt>
     <dd>
-<span class="refAuthor">Leiba, B.</span>, <span class="refTitle">"Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 8174</span>, <span class="seriesInfo">DOI 10.17487/RFC8174</span>, <time datetime="2017-05" class="refDate">May 2017</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8174">https://www.rfc-editor.org/rfc/rfc8174</a>&gt;</span>. </dd>
+<span class="refTitle">"Digital signature standard (DSS)"</span>, <span class="refContent">National Institute of Standards and Technology (U.S.)</span>, <span class="seriesInfo">DOI 10.6028/nist.fips.186-4</span>, <time datetime="2013" class="refDate">2013</time>, <span>&lt;<a href="https://doi.org/10.6028/nist.fips.186-4">https://doi.org/10.6028/nist.fips.186-4</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 </dl>
 </section>
 </div>
-<div id="acknowledgments">
-<section id="appendix-A">
-      <h2 id="name-acknowledgments">
-<a href="#name-acknowledgments" class="section-name selfRef">Acknowledgments</a>
-      </h2>
-<p id="appendix-A-1">TODO acknowledge.<a href="#appendix-A-1" class="pilcrow">¶</a></p>
-</section>
-</div>
 <div id="authors-addresses">
-<section id="appendix-B">
+<section id="appendix-A">
       <h2 id="name-authors-address">
 <a href="#name-authors-address" class="section-name selfRef">Author's Address</a>
       </h2>
 <address class="vcard">
-        <div dir="auto" class="left"><span class="fn nameRole">Your Name Here</span></div>
-<div dir="auto" class="left"><span class="org">Your Organization Here</span></div>
+        <div dir="auto" class="left"><span class="fn nameRole">Ying Tong Lai</span></div>
+<div dir="auto" class="left"><span class="org">Ethereum Foundation</span></div>
 <div class="email">
 <span>Email:</span>
-<a href="mailto:your.email@example.com" class="email">your.email@example.com</a>
+<a href="mailto:yingtong.lai@gmail.com" class="email">yingtong.lai@gmail.com</a>
 </div>
 </address>
 </section>
