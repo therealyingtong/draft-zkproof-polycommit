@@ -252,7 +252,8 @@ Table of Contents
 
    *Output:*
 
-   *  verify outputs 1 if the opening proof is valid, and 0 otherwise
+   *  verify outputs true if the opening proof is valid, and false
+      otherwise
 
 1.2.  Batched setting
 
@@ -344,7 +345,7 @@ Table of Contents
 
    *Output:*
 
-   *  batch_verify outputs 1 if the opening proof is valid, and 0
+   *  batch_verify outputs true if the opening proof is valid, and false
       otherwise
 
 2.  Concrete polynomial commitment schemes
