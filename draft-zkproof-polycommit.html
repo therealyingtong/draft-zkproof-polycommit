@@ -1048,7 +1048,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Lai</td>
-<td class="center">Expires 20 November 2025</td>
+<td class="center">Expires 21 November 2025</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1061,12 +1061,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-zkproof-polycommit-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2025-05-19" class="published">19 May 2025</time>
+<time datetime="2025-05-20" class="published">20 May 2025</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Informational</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2025-11-20">20 November 2025</time></dd>
+<dd class="expires"><time datetime="2025-11-21">21 November 2025</time></dd>
 <dt class="label-authors">Author:</dt>
 <dd class="authors">
 <div class="author">
@@ -1111,7 +1111,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 20 November 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 21 November 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1207,11 +1207,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
              │ oracle proof│             │ scheme      │             │             │
              │ (PIOP)      │             │ (PCS)       │             │             │
              │             │             │             │             │             │
-             └─────────────┘             └─────────────┘             └─────────────┘ *Fig 1: The components of a modern zk-SNARK.*
+             └─────────────┘             └─────────────┘             └─────────────┘
 </pre><a href="#section-1-2" class="pilcrow">¶</a>
 </div>
-<p id="section-1-3">A polynomial commitment scheme is parameterised over a finite field <code>WitnessField</code> for its representation, and a (potentially identical) finite  field <code>ChallengeField</code> for its evaluation points.<a href="#section-1-3" class="pilcrow">¶</a></p>
-<p id="section-1-4">NON-NORMATIVE NOTE: In small-field PCSes, challenges are usually drawn from an extension field <code>ChallengeField</code>.<a href="#section-1-4" class="pilcrow">¶</a></p>
+<p id="section-1-3"><em>Fig 1: The components of a modern zk-SNARK.</em><a href="#section-1-3" class="pilcrow">¶</a></p>
+<p id="section-1-4">A polynomial commitment scheme is parameterised over a finite field <code>WitnessField</code> for its representation, and a (potentially identical) finite  field <code>ChallengeField</code> for its evaluation points.<a href="#section-1-4" class="pilcrow">¶</a></p>
+<p id="section-1-5">NON-NORMATIVE NOTE: In small-field PCSes, challenges are usually drawn from an extension field <code>ChallengeField</code>.<a href="#section-1-5" class="pilcrow">¶</a></p>
 <div id="generic-interface">
 <section id="section-1.1">
         <h3 id="name-generic-interface">
@@ -1235,16 +1236,32 @@ fn setup(
 ) -&gt; (CommitterKey, VerifierKey)
 </pre><a href="#section-1.1.1-2" class="pilcrow">¶</a>
 </div>
-<p id="section-1.1.1-3"><strong>Input:</strong>
-- <code>security_bits</code>: the desired number of bits of security
-- <code>num_vars</code>: the number of variables in the polynomial
-  NON-NORMATIVE NOTE: For univariate polynomials, num_vars = 1
-- <code>degree_bounds</code>: the upper bounds on the degree of each variable in the polynomial; <code>degree_bounds.len()</code> MUST equal <code>num_vars</code>
-  NON-NORMATIVE NOTE: For multilinear polynomials, degree_bounds = 1 for each variable
-- (OPTIONAL) <code>rng</code>: a randomness generator<a href="#section-1.1.1-3" class="pilcrow">¶</a></p>
-<p id="section-1.1.1-4"><strong>Output:</strong>
-- <code>ck</code>: a committer key used in computing commitments and opening proofs; this contains also the description of finite fields for the witness <code>WitnessField</code>, as well as for the challenge <code>ChallengeField</code>.
-- <code>vk</code>: a verifier key used in verifying opening proofs; this contains also the description of finite fields for the witness <code>WitnessField</code>, as well as for the challenge <code>ChallengeField</code>.<a href="#section-1.1.1-4" class="pilcrow">¶</a></p>
+<p id="section-1.1.1-3"><strong>Input:</strong><a href="#section-1.1.1-3" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-1.1.1-4.1">
+              <p id="section-1.1.1-4.1.1"><code>security_bits</code>: the desired number of bits of security<a href="#section-1.1.1-4.1.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-1.1.1-4.2">
+              <p id="section-1.1.1-4.2.1"><code>num_vars</code>: the number of variables in the polynomial
+NON-NORMATIVE NOTE: For univariate polynomials, num_vars = 1<a href="#section-1.1.1-4.2.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-1.1.1-4.3">
+              <p id="section-1.1.1-4.3.1"><code>degree_bounds</code>: the upper bounds on the degree of each variable in the polynomial; <code>degree_bounds.len()</code> MUST equal <code>num_vars</code>
+NON-NORMATIVE NOTE: For multilinear polynomials, degree_bounds = 1 for each variable<a href="#section-1.1.1-4.3.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-1.1.1-4.4">
+              <p id="section-1.1.1-4.4.1">(OPTIONAL) <code>rng</code>: a randomness generator<a href="#section-1.1.1-4.4.1" class="pilcrow">¶</a></p>
+</li>
+          </ul>
+<p id="section-1.1.1-5"><strong>Output:</strong><a href="#section-1.1.1-5" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-1.1.1-6.1">
+              <p id="section-1.1.1-6.1.1"><code>ck</code>: a committer key used in computing commitments and opening proofs; this contains also the description of finite fields for the witness <code>WitnessField</code>, as well as for the challenge <code>ChallengeField</code>.<a href="#section-1.1.1-6.1.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-1.1.1-6.2">
+              <p id="section-1.1.1-6.2.1"><code>vk</code>: a verifier key used in verifying opening proofs; this contains also the description of finite fields for the witness <code>WitnessField</code>, as well as for the challenge <code>ChallengeField</code>.<a href="#section-1.1.1-6.2.1" class="pilcrow">¶</a></p>
+</li>
+          </ul>
 </section>
 </div>
 <div id="commit">
@@ -1262,13 +1279,25 @@ fn commit(
 ) -&gt; Commitment
 </pre><a href="#section-1.1.2-2" class="pilcrow">¶</a>
 </div>
-<p id="section-1.1.2-3"><strong>Input:</strong>
-- <code>ck</code>: the committer key
-- <code>poly</code>: a polynomial with degree at most <code>deg(X_i) = d_i ≤ D_i</code> in each variable
-- (OPTIONAL) <code>r</code>: a random element from the <code>WitnessField</code>; this can be set to <code>None</code> if the commitment is non-hiding
-    NON-NORMATIVE NOTE: Zero-knowledge protocols often apply non-hiding polynomial commitment schemes to a "masked" polynomial, instead of the actual witness polynomial. The caller is responsible for masking the polynomial before providing it as input to<code>commit</code>.<a href="#section-1.1.2-3" class="pilcrow">¶</a></p>
-<p id="section-1.1.2-4"><strong>Output:</strong>
-- <code>com</code>: a binding and optionally hiding polynomial commitment to <code>poly</code><a href="#section-1.1.2-4" class="pilcrow">¶</a></p>
+<p id="section-1.1.2-3"><strong>Input:</strong><a href="#section-1.1.2-3" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-1.1.2-4.1">
+              <p id="section-1.1.2-4.1.1"><code>ck</code>: the committer key<a href="#section-1.1.2-4.1.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-1.1.2-4.2">
+              <p id="section-1.1.2-4.2.1"><code>poly</code>: a polynomial with degree at most <code>deg(X_i) = d_i ≤ D_i</code> in each variable<a href="#section-1.1.2-4.2.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-1.1.2-4.3">
+              <p id="section-1.1.2-4.3.1">(OPTIONAL) <code>r</code>: a random element from the <code>WitnessField</code>; this can be set to <code>None</code> if the commitment is non-hiding
+  NON-NORMATIVE NOTE: Zero-knowledge protocols often apply non-hiding polynomial commitment schemes to a "masked" polynomial, instead of the actual witness polynomial. The caller is responsible for masking the polynomial before providing it as input to<code>commit</code>.<a href="#section-1.1.2-4.3.1" class="pilcrow">¶</a></p>
+</li>
+          </ul>
+<p id="section-1.1.2-5"><strong>Output:</strong><a href="#section-1.1.2-5" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-1.1.2-6.1">
+              <p id="section-1.1.2-6.1.1"><code>com</code>: a binding and optionally hiding polynomial commitment to <code>poly</code><a href="#section-1.1.2-6.1.1" class="pilcrow">¶</a></p>
+</li>
+          </ul>
 </section>
 </div>
 <div id="open">
@@ -1288,16 +1317,34 @@ fn open(
 ) -&gt; (ChallengeField, Proof)
 </pre><a href="#section-1.1.3-2" class="pilcrow">¶</a>
 </div>
-<p id="section-1.1.3-3"><strong>Input:</strong>
-- <code>ck</code>: the committer key
-- <code>poly</code>: a polynomial with degree at most <code>deg(X_i) = d_i ≤ D_i</code> in each variable
-- <code>com</code>: a commitment to <code>poly</code>
-- <code>challenge</code>: the evaluation point at which <code>com</code> will be opened; this consists of <code>num_vars</code> elements from the <code>ChallengeField</code>
-    NON-NORMATIVE NOTE: In the non-interactive setting, the challenge is derived from the commitment using the Fiat-Shamir transform.
-- (OPTIONAL) <code>r</code>: a random element from the <code>WitnessField</code>; this MUST equal the <code>r</code> previously used in <code>commit</code><a href="#section-1.1.3-3" class="pilcrow">¶</a></p>
-<p id="section-1.1.3-4"><strong>Output:</strong>
-- <code>eval</code>: the evaluation of <code>poly</code> at the evaluation point <code>challenge</code>
-- <code>proof</code>: an opening proof attesting to the correctness of the opening<a href="#section-1.1.3-4" class="pilcrow">¶</a></p>
+<p id="section-1.1.3-3"><strong>Input:</strong><a href="#section-1.1.3-3" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-1.1.3-4.1">
+              <p id="section-1.1.3-4.1.1"><code>ck</code>: the committer key<a href="#section-1.1.3-4.1.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-1.1.3-4.2">
+              <p id="section-1.1.3-4.2.1"><code>poly</code>: a polynomial with degree at most <code>deg(X_i) = d_i ≤ D_i</code> in each variable<a href="#section-1.1.3-4.2.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-1.1.3-4.3">
+              <p id="section-1.1.3-4.3.1"><code>com</code>: a commitment to <code>poly</code><a href="#section-1.1.3-4.3.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-1.1.3-4.4">
+              <p id="section-1.1.3-4.4.1"><code>challenge</code>: the evaluation point at which <code>com</code> will be opened; this consists of <code>num_vars</code> elements from the <code>ChallengeField</code>
+  NON-NORMATIVE NOTE: In the non-interactive setting, the challenge is derived from the commitment using the Fiat-Shamir transform.<a href="#section-1.1.3-4.4.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-1.1.3-4.5">
+              <p id="section-1.1.3-4.5.1">(OPTIONAL) <code>r</code>: a random element from the <code>WitnessField</code>; this MUST equal the <code>r</code> previously used in <code>commit</code><a href="#section-1.1.3-4.5.1" class="pilcrow">¶</a></p>
+</li>
+          </ul>
+<p id="section-1.1.3-5"><strong>Output:</strong><a href="#section-1.1.3-5" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-1.1.3-6.1">
+              <p id="section-1.1.3-6.1.1"><code>eval</code>: the evaluation of <code>poly</code> at the evaluation point <code>challenge</code><a href="#section-1.1.3-6.1.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-1.1.3-6.2">
+              <p id="section-1.1.3-6.2.1"><code>proof</code>: an opening proof attesting to the correctness of the opening<a href="#section-1.1.3-6.2.1" class="pilcrow">¶</a></p>
+</li>
+          </ul>
 </section>
 </div>
 <div id="verify">
@@ -1317,14 +1364,30 @@ fn verify(
 ) -&gt; bool
 </pre><a href="#section-1.1.4-2" class="pilcrow">¶</a>
 </div>
-<p id="section-1.1.4-3"><strong>Input:</strong>
-- <code>vk</code>: the verifier key
-- <code>com</code>: a polynomial commitment
-- <code>challenge</code>: the evaluation point at which <code>com</code> is opened
-- <code>eval</code>: the purported evaluation of the committed polynomial at <code>challenge</code>
-- <code>proof</code>: the opening proof the claim "<code>com</code> commits to a polynomial that evaluates to <code>eval</code> at <code>challenge</code>"<a href="#section-1.1.4-3" class="pilcrow">¶</a></p>
-<p id="section-1.1.4-4"><strong>Output:</strong>
-- <code>verify</code> outputs <code>1</code> if the opening proof is valid, and <code>0</code> otherwise<a href="#section-1.1.4-4" class="pilcrow">¶</a></p>
+<p id="section-1.1.4-3"><strong>Input:</strong><a href="#section-1.1.4-3" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-1.1.4-4.1">
+              <p id="section-1.1.4-4.1.1"><code>vk</code>: the verifier key<a href="#section-1.1.4-4.1.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-1.1.4-4.2">
+              <p id="section-1.1.4-4.2.1"><code>com</code>: a polynomial commitment<a href="#section-1.1.4-4.2.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-1.1.4-4.3">
+              <p id="section-1.1.4-4.3.1"><code>challenge</code>: the evaluation point at which <code>com</code> is opened<a href="#section-1.1.4-4.3.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-1.1.4-4.4">
+              <p id="section-1.1.4-4.4.1"><code>eval</code>: the purported evaluation of the committed polynomial at <code>challenge</code><a href="#section-1.1.4-4.4.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-1.1.4-4.5">
+              <p id="section-1.1.4-4.5.1"><code>proof</code>: the opening proof the claim "<code>com</code> commits to a polynomial that evaluates to <code>eval</code> at <code>challenge</code>"<a href="#section-1.1.4-4.5.1" class="pilcrow">¶</a></p>
+</li>
+          </ul>
+<p id="section-1.1.4-5"><strong>Output:</strong><a href="#section-1.1.4-5" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-1.1.4-6.1">
+              <p id="section-1.1.4-6.1.1"><code>verify</code> outputs <code>1</code> if the opening proof is valid, and <code>0</code> otherwise<a href="#section-1.1.4-6.1.1" class="pilcrow">¶</a></p>
+</li>
+          </ul>
 </section>
 </div>
 </section>
@@ -1357,15 +1420,33 @@ fn batch_open(
 ) -&gt; (Vec&lt;Vec&lt;ChallengeField&gt;&gt;, BatchProof)
 </pre><a href="#section-1.2.1-3" class="pilcrow">¶</a>
 </div>
-<p id="section-1.2.1-4"><strong>Input:</strong>
-- <code>ck</code>: the committer key
-- <code>polys</code>: the batch of polynomials to open
-- <code>coms</code>: the commitments corresponding to <code>polys</code>; <code>coms.len()</code> MUST equal <code>polys.len()</code>
-- <code>challenges</code>: the sets of challenge points at which to evaluate each polynomial; <code>challenges.len()</code> MUST equal <code>polys.len()</code>
-- <code>rs</code>: the OPTIONAL random blinding factors used in each commitment; <code>rs.len()</code> MUST equal <code>polys.len()</code><a href="#section-1.2.1-4" class="pilcrow">¶</a></p>
-<p id="section-1.2.1-5"><strong>Output:</strong>
-- <code>evals</code>: the evaluations of each polynomial at each challenge set; <code>evals.len()</code> MUST equal <code>polys.len()</code>, and each <code>evals[j].len()</code> MUST equal the corresponding <code>challenges[j].len()</code>
-- <code>batch_proof</code>: an opening proof for the batch opening claim<a href="#section-1.2.1-5" class="pilcrow">¶</a></p>
+<p id="section-1.2.1-4"><strong>Input:</strong><a href="#section-1.2.1-4" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-1.2.1-5.1">
+              <p id="section-1.2.1-5.1.1"><code>ck</code>: the committer key<a href="#section-1.2.1-5.1.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-1.2.1-5.2">
+              <p id="section-1.2.1-5.2.1"><code>polys</code>: the batch of polynomials to open<a href="#section-1.2.1-5.2.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-1.2.1-5.3">
+              <p id="section-1.2.1-5.3.1"><code>coms</code>: the commitments corresponding to <code>polys</code>; <code>coms.len()</code> MUST equal <code>polys.len()</code><a href="#section-1.2.1-5.3.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-1.2.1-5.4">
+              <p id="section-1.2.1-5.4.1"><code>challenges</code>: the sets of challenge points at which to evaluate each polynomial; <code>challenges.len()</code> MUST equal <code>polys.len()</code><a href="#section-1.2.1-5.4.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-1.2.1-5.5">
+              <p id="section-1.2.1-5.5.1"><code>rs</code>: the OPTIONAL random blinding factors used in each commitment; <code>rs.len()</code> MUST equal <code>polys.len()</code><a href="#section-1.2.1-5.5.1" class="pilcrow">¶</a></p>
+</li>
+          </ul>
+<p id="section-1.2.1-6"><strong>Output:</strong><a href="#section-1.2.1-6" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-1.2.1-7.1">
+              <p id="section-1.2.1-7.1.1"><code>evals</code>: the evaluations of each polynomial at each challenge set; <code>evals.len()</code> MUST equal <code>polys.len()</code>, and each <code>evals[j].len()</code> MUST equal the corresponding <code>challenges[j].len()</code><a href="#section-1.2.1-7.1.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-1.2.1-7.2">
+              <p id="section-1.2.1-7.2.1"><code>batch_proof</code>: an opening proof for the batch opening claim<a href="#section-1.2.1-7.2.1" class="pilcrow">¶</a></p>
+</li>
+          </ul>
 </section>
 </div>
 <div id="batchverify">
@@ -1385,14 +1466,30 @@ fn batch_verify(
 ) -&gt; bool
 </pre><a href="#section-1.2.2-2" class="pilcrow">¶</a>
 </div>
-<p id="section-1.2.2-3"><strong>Input:</strong>
-- <code>vk</code>: the verifier key
-- <code>coms</code>: a vector of polynomial commitments
-- <code>challenges</code>: the sets of challenge points at which each commitment was opened; <code>challenges.len()</code> MUST equal <code>coms.len()</code>
-- <code>evals</code>: the purported openings of each commitment at each challenge set; <code>evals.len()</code> MUST equal <code>coms.len()</code>, and each <code>evals[j].len()</code> MUST equal the corresponding <code>challenges[j].len()</code>
-- <code>batch_proof</code>: an opening proof for the batch opening claim<a href="#section-1.2.2-3" class="pilcrow">¶</a></p>
-<p id="section-1.2.2-4"><strong>Output:</strong>
-- <code>batch_verify</code> outputs <code>1</code> if the opening proof is valid, and <code>0</code> otherwise<a href="#section-1.2.2-4" class="pilcrow">¶</a></p>
+<p id="section-1.2.2-3"><strong>Input:</strong><a href="#section-1.2.2-3" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-1.2.2-4.1">
+              <p id="section-1.2.2-4.1.1"><code>vk</code>: the verifier key<a href="#section-1.2.2-4.1.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-1.2.2-4.2">
+              <p id="section-1.2.2-4.2.1"><code>coms</code>: a vector of polynomial commitments<a href="#section-1.2.2-4.2.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-1.2.2-4.3">
+              <p id="section-1.2.2-4.3.1"><code>challenges</code>: the sets of challenge points at which each commitment was opened; <code>challenges.len()</code> MUST equal <code>coms.len()</code><a href="#section-1.2.2-4.3.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-1.2.2-4.4">
+              <p id="section-1.2.2-4.4.1"><code>evals</code>: the purported openings of each commitment at each challenge set; <code>evals.len()</code> MUST equal <code>coms.len()</code>, and each <code>evals[j].len()</code> MUST equal the corresponding <code>challenges[j].len()</code><a href="#section-1.2.2-4.4.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-1.2.2-4.5">
+              <p id="section-1.2.2-4.5.1"><code>batch_proof</code>: an opening proof for the batch opening claim<a href="#section-1.2.2-4.5.1" class="pilcrow">¶</a></p>
+</li>
+          </ul>
+<p id="section-1.2.2-5"><strong>Output:</strong><a href="#section-1.2.2-5" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-1.2.2-6.1">
+              <p id="section-1.2.2-6.1.1"><code>batch_verify</code> outputs <code>1</code> if the opening proof is valid, and <code>0</code> otherwise<a href="#section-1.2.2-6.1.1" class="pilcrow">¶</a></p>
+</li>
+          </ul>
 </section>
 </div>
 </section>
@@ -1436,12 +1533,8 @@ fn batch_verify(
       </h2>
 <dl class="references">
 <dt id="fiat-shamir">[fiat-shamir]</dt>
-      <dd>
-<span class="refTitle">"draft-orru-zkproofs-fiat-shamir"</span>, <span>&lt;<a href="https://mmaker.github.io/spfs/draft-orru-zkproof-fiat-shamir.html">https://mmaker.github.io/spfs/draft-orru-zkproof-fiat-shamir.html</a>&gt;</span>. </dd>
-<dd class="break"></dd>
-<dt id="NISTCurves">[NISTCurves]</dt>
     <dd>
-<span class="refTitle">"Digital signature standard (DSS)"</span>, <span class="refContent">National Institute of Standards and Technology (U.S.)</span>, <span class="seriesInfo">DOI 10.6028/nist.fips.186-4</span>, <time datetime="2013" class="refDate">2013</time>, <span>&lt;<a href="https://doi.org/10.6028/nist.fips.186-4">https://doi.org/10.6028/nist.fips.186-4</a>&gt;</span>. </dd>
+<span class="refTitle">"draft-orru-zkproofs-fiat-shamir"</span>, <span>&lt;<a href="https://mmaker.github.io/spfs/draft-orru-zkproof-fiat-shamir.html">https://mmaker.github.io/spfs/draft-orru-zkproof-fiat-shamir.html</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 </dl>
 </section>

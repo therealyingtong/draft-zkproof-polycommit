@@ -4,8 +4,8 @@
 
 WG Working Group                                               Y. T. Lai
 Internet-Draft                                       Ethereum Foundation
-Intended status: Informational                               19 May 2025
-Expires: 20 November 2025
+Intended status: Informational                               20 May 2025
+Expires: 21 November 2025
 
 
                      Polynomial Commitment Schemes
@@ -47,7 +47,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 20 November 2025.
+   This Internet-Draft will expire on 21 November 2025.
 
 Copyright Notice
 
@@ -94,7 +94,9 @@ Table of Contents
              │ oracle proof│             │ scheme      │             │             │
              │ (PIOP)      │             │ (PCS)       │             │             │
              │             │             │             │             │             │
-             └─────────────┘             └─────────────┘             └─────────────┘ *Fig 1: The components of a modern zk-SNARK.*
+             └─────────────┘             └─────────────┘             └─────────────┘
+
+   _Fig 1: The components of a modern zk-SNARK._
 
    A polynomial commitment scheme is parameterised over a finite field
    WitnessField for its representation, and a (potentially identical)
@@ -123,20 +125,30 @@ Table of Contents
        rng: Option<Rng>,
    ) -> (CommitterKey, VerifierKey)
 
-   *Input:* - security_bits: the desired number of bits of security -
-   num_vars: the number of variables in the polynomial NON-NORMATIVE
-   NOTE: For univariate polynomials, num_vars = 1 - degree_bounds: the
-   upper bounds on the degree of each variable in the polynomial;
-   degree_bounds.len() MUST equal num_vars NON-NORMATIVE NOTE: For
-   multilinear polynomials, degree_bounds = 1 for each variable -
-   (OPTIONAL) rng: a randomness generator
+   *Input:*
 
-   *Output:* - ck: a committer key used in computing commitments and
-   opening proofs; this contains also the description of finite fields
-   for the witness WitnessField, as well as for the challenge
-   ChallengeField. - vk: a verifier key used in verifying opening
-   proofs; this contains also the description of finite fields for the
-   witness WitnessField, as well as for the challenge ChallengeField.
+   *  security_bits: the desired number of bits of security
+
+   *  num_vars: the number of variables in the polynomial NON-NORMATIVE
+      NOTE: For univariate polynomials, num_vars = 1
+
+   *  degree_bounds: the upper bounds on the degree of each variable in
+      the polynomial; degree_bounds.len() MUST equal num_vars NON-
+      NORMATIVE NOTE: For multilinear polynomials, degree_bounds = 1 for
+      each variable
+
+   *  (OPTIONAL) rng: a randomness generator
+
+   *Output:*
+
+   *  ck: a committer key used in computing commitments and opening
+      proofs; this contains also the description of finite fields for
+      the witness WitnessField, as well as for the challenge
+      ChallengeField.
+
+   *  vk: a verifier key used in verifying opening proofs; this contains
+      also the description of finite fields for the witness
+      WitnessField, as well as for the challenge ChallengeField.
 
 1.1.2.  commit
 
@@ -150,17 +162,23 @@ Table of Contents
        r: Option<WitnessField>
    ) -> Commitment
 
-   *Input:* - ck: the committer key - poly: a polynomial with degree at
-   most deg(X_i) = d_i ≤ D_i in each variable - (OPTIONAL) r: a random
-   element from the WitnessField; this can be set to None if the
-   commitment is non-hiding NON-NORMATIVE NOTE: Zero-knowledge protocols
-   often apply non-hiding polynomial commitment schemes to a "masked"
-   polynomial, instead of the actual witness polynomial.  The caller is
-   responsible for masking the polynomial before providing it as input
-   tocommit.
+   *Input:*
 
-   *Output:* - com: a binding and optionally hiding polynomial
-   commitment to poly
+   *  ck: the committer key
+
+   *  poly: a polynomial with degree at most deg(X_i) = d_i ≤ D_i in
+      each variable
+
+   *  (OPTIONAL) r: a random element from the WitnessField; this can be
+      set to None if the commitment is non-hiding NON-NORMATIVE NOTE:
+      Zero-knowledge protocols often apply non-hiding polynomial
+      commitment schemes to a "masked" polynomial, instead of the actual
+      witness polynomial.  The caller is responsible for masking the
+      polynomial before providing it as input tocommit.
+
+   *Output:*
+
+   *  com: a binding and optionally hiding polynomial commitment to poly
 
 1.1.3.  open
 
@@ -179,18 +197,29 @@ Table of Contents
        r: Option<WitnessField>
    ) -> (ChallengeField, Proof)
 
-   *Input:* - ck: the committer key - poly: a polynomial with degree at
-   most deg(X_i) = d_i ≤ D_i in each variable - com: a commitment to
-   poly - challenge: the evaluation point at which com will be opened;
-   this consists of num_vars elements from the ChallengeField NON-
-   NORMATIVE NOTE: In the non-interactive setting, the challenge is
-   derived from the commitment using the Fiat-Shamir transform. -
-   (OPTIONAL) r: a random element from the WitnessField; this MUST equal
-   the r previously used in commit
+   *Input:*
 
-   *Output:* - eval: the evaluation of poly at the evaluation point
-   challenge - proof: an opening proof attesting to the correctness of
-   the opening
+   *  ck: the committer key
+
+   *  poly: a polynomial with degree at most deg(X_i) = d_i ≤ D_i in
+      each variable
+
+   *  com: a commitment to poly
+
+   *  challenge: the evaluation point at which com will be opened; this
+      consists of num_vars elements from the ChallengeField NON-
+      NORMATIVE NOTE: In the non-interactive setting, the challenge is
+      derived from the commitment using the Fiat-Shamir transform.
+
+   *  (OPTIONAL) r: a random element from the WitnessField; this MUST
+      equal the r previously used in commit
+
+   *Output:*
+
+   *  eval: the evaluation of poly at the evaluation point challenge
+
+   *  proof: an opening proof attesting to the correctness of the
+      opening
 
 1.1.4.  verify
 
@@ -207,14 +236,23 @@ Table of Contents
        proof: Proof,
    ) -> bool
 
-   *Input:* - vk: the verifier key - com: a polynomial commitment -
-   challenge: the evaluation point at which com is opened - eval: the
-   purported evaluation of the committed polynomial at challenge -
-   proof: the opening proof the claim "com commits to a polynomial that
-   evaluates to eval at challenge"
+   *Input:*
 
-   *Output:* - verify outputs 1 if the opening proof is valid, and 0
-   otherwise
+   *  vk: the verifier key
+
+   *  com: a polynomial commitment
+
+   *  challenge: the evaluation point at which com is opened
+
+   *  eval: the purported evaluation of the committed polynomial at
+      challenge
+
+   *  proof: the opening proof the claim "com commits to a polynomial
+      that evaluates to eval at challenge"
+
+   *Output:*
+
+   *  verify outputs 1 if the opening proof is valid, and 0 otherwise
 
 1.2.  Batched setting
 
@@ -250,17 +288,28 @@ Table of Contents
        rs: Vec<Option<ChallengeField>>
    ) -> (Vec<Vec<ChallengeField>>, BatchProof)
 
-   *Input:* - ck: the committer key - polys: the batch of polynomials to
-   open - coms: the commitments corresponding to polys; coms.len() MUST
-   equal polys.len() - challenges: the sets of challenge points at which
-   to evaluate each polynomial; challenges.len() MUST equal polys.len()
-   - rs: the OPTIONAL random blinding factors used in each commitment;
-   rs.len() MUST equal polys.len()
+   *Input:*
 
-   *Output:* - evals: the evaluations of each polynomial at each
-   challenge set; evals.len() MUST equal polys.len(), and each
-   evals[j].len() MUST equal the corresponding challenges[j].len() -
-   batch_proof: an opening proof for the batch opening claim
+   *  ck: the committer key
+
+   *  polys: the batch of polynomials to open
+
+   *  coms: the commitments corresponding to polys; coms.len() MUST
+      equal polys.len()
+
+   *  challenges: the sets of challenge points at which to evaluate each
+      polynomial; challenges.len() MUST equal polys.len()
+
+   *  rs: the OPTIONAL random blinding factors used in each commitment;
+      rs.len() MUST equal polys.len()
+
+   *Output:*
+
+   *  evals: the evaluations of each polynomial at each challenge set;
+      evals.len() MUST equal polys.len(), and each evals[j].len() MUST
+      equal the corresponding challenges[j].len()
+
+   *  batch_proof: an opening proof for the batch opening claim
 
 1.2.2.  batch_verify
 
@@ -278,16 +327,25 @@ Table of Contents
        proof: BatchProof,
    ) -> bool
 
-   *Input:* - vk: the verifier key - coms: a vector of polynomial
-   commitments - challenges: the sets of challenge points at which each
-   commitment was opened; challenges.len() MUST equal coms.len() -
-   evals: the purported openings of each commitment at each challenge
-   set; evals.len() MUST equal coms.len(), and each evals[j].len() MUST
-   equal the corresponding challenges[j].len() - batch_proof: an opening
-   proof for the batch opening claim
+   *Input:*
 
-   *Output:* - batch_verify outputs 1 if the opening proof is valid, and
-   0 otherwise
+   *  vk: the verifier key
+
+   *  coms: a vector of polynomial commitments
+
+   *  challenges: the sets of challenge points at which each commitment
+      was opened; challenges.len() MUST equal coms.len()
+
+   *  evals: the purported openings of each commitment at each challenge
+      set; evals.len() MUST equal coms.len(), and each evals[j].len()
+      MUST equal the corresponding challenges[j].len()
+
+   *  batch_proof: an opening proof for the batch opening claim
+
+   *Output:*
+
+   *  batch_verify outputs 1 if the opening proof is valid, and 0
+      otherwise
 
 2.  Concrete polynomial commitment schemes
 
@@ -309,12 +367,6 @@ Informative References
               "draft-orru-zkproofs-fiat-shamir",
               <https://mmaker.github.io/spfs/draft-orru-zkproof-fiat-
               shamir.html>.
-
-   [NISTCurves]
-              "Digital signature standard (DSS)", National Institute of
-              Standards and Technology (U.S.),
-              DOI 10.6028/nist.fips.186-4, 2013,
-              <https://doi.org/10.6028/nist.fips.186-4>.
 
 Author's Address
 
