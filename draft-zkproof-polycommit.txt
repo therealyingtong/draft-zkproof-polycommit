@@ -3,8 +3,8 @@
 
 
 WG Working Group                                               Y. T. Lai
-Internet-Draft                                       Ethereum Foundation
-Intended status: Informational                               20 May 2025
+Internet-Draft                                               20 May 2025
+Intended status: Informational                                          
 Expires: 21 November 2025
 
 
@@ -371,5 +371,4 @@ Informative References
 Author's Address
 
    Ying Tong Lai
-   Ethereum Foundation
    Email: yingtong.lai@gmail.com
