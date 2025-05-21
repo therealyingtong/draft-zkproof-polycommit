@@ -73,8 +73,8 @@ Table of Contents
        1.2.2.  batch_verify
    2.  Concrete polynomial commitment schemes
      2.1.  Ligero AHIV17
-       2.1.1.  Univariate setting
-       2.1.2.  Multi-linear setting
+       2.1.1.  setup
+       2.1.2.  commit
    3.  Security Considerations (WIP)
    4.  IANA Considerations
    Acknowledgments
@@ -103,7 +103,10 @@ Table of Contents
 
    A polynomial commitment scheme is parameterised over a finite field
    WitnessField for its representation, and a (potentially identical)
-   finite field ChallengeField for its evaluation points.
+   finite field ChallengeField for its evaluation points.  It is also
+   parameterised over an underlying cryptographic hardness assumption,
+   such as a collision-resistant hash function or the elliptic curve
+   discrete logarithm problem.
 
    NON-NORMATIVE NOTE: In small-field PCSes, challenges are usually
    drawn from an extension field ChallengeField.
@@ -119,7 +122,7 @@ Table of Contents
    an OPTIONAL randomness generator rng, setup samples a public
    CommitterKey and VerifierKey for the polynomial commitment scheme.
    NON-NORMATIVE NOTE: This generalises over both trusted setups (SRS)
-   and transparent setups
+   and transparent setups.
 
    fn setup(
        security_bits: usize,
@@ -356,17 +359,32 @@ Table of Contents
 
 2.1.  Ligero [AHIV17]
 
-   The Ligero [AHIV17] proof system includes an implicit polynomial
-   commitment scheme, described below for both the univariate and multi-
-   linear settings.
+   The Ligero [AHIV17] proof system can be used to instantiate a
+   polynomial commitment scheme.  It is parameterised over a collision-
+   resistant hash function Hash.
 
-2.1.1.  Univariate setting
+   Both the LigeroCommitterKey and LigeroVerifierKey are the same type
+   LigeroParams:
 
-   #### setup #### commit #### open #### verify
+   struct LigeroParams<H: CRHScheme> {
+       security_bits: usize,
+       code_rate: usize,
+   }
 
-2.1.2.  Multi-linear setting
+2.1.1.  setup
 
-   #### setup #### commit #### open #### verify
+   fn setup(
+       security_bits: usize,
+       num_vars: usize,
+       degree_bounds: Vec<usize>,
+       rng: Option<Rng>,
+   ) -> (CommitterKey, VerifierKey) {
+
+   }
+
+2.1.2.  commit
+
+   ### open ### verify
 
 3.  Security Considerations (WIP)
 

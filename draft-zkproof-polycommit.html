@@ -1176,10 +1176,10 @@ svg :is([fill="white"], [fill^="#fff"]) {
                 <p id="section-toc.1-1.2.2.1.1"><a href="#section-2.1" class="auto internal xref">2.1</a>.  <a href="#name-ligero" class="internal xref">Ligero AHIV17</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.1.2.1">
-                    <p id="section-toc.1-1.2.2.1.2.1.1"><a href="#section-2.1.1" class="auto internal xref">2.1.1</a>.  <a href="#name-univariate-setting" class="internal xref">Univariate setting</a></p>
+                    <p id="section-toc.1-1.2.2.1.2.1.1"><a href="#section-2.1.1" class="auto internal xref">2.1.1</a>.  <a href="#name-setup-2" class="internal xref"><code>setup</code></a></p>
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.1.2.2">
-                    <p id="section-toc.1-1.2.2.1.2.2.1"><a href="#section-2.1.2" class="auto internal xref">2.1.2</a>.  <a href="#name-multi-linear-setting" class="internal xref">Multi-linear setting</a></p>
+                    <p id="section-toc.1-1.2.2.1.2.2.1"><a href="#section-2.1.2" class="auto internal xref">2.1.2</a>.  <a href="#name-commit-2" class="internal xref"><code>commit</code></a></p>
 </li>
                 </ul>
 </li>
@@ -1223,7 +1223,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 </pre><a href="#section-1-2" class="pilcrow">¶</a>
 </div>
 <p id="section-1-3"><em>Fig 1: The components of a modern zk-SNARK.</em><a href="#section-1-3" class="pilcrow">¶</a></p>
-<p id="section-1-4">A polynomial commitment scheme is parameterised over a finite field <code>WitnessField</code> for its representation, and a (potentially identical) finite  field <code>ChallengeField</code> for its evaluation points.<a href="#section-1-4" class="pilcrow">¶</a></p>
+<p id="section-1-4">A polynomial commitment scheme is parameterised over a finite field <code>WitnessField</code> for its representation, and a (potentially identical) finite  field <code>ChallengeField</code> for its evaluation points. It is also parameterised over an underlying cryptographic hardness assumption, such as a collision-resistant hash function or the elliptic curve discrete logarithm problem.<a href="#section-1-4" class="pilcrow">¶</a></p>
 <p id="section-1-5">NON-NORMATIVE NOTE: In small-field PCSes, challenges are usually drawn from an extension field <code>ChallengeField</code>.<a href="#section-1-5" class="pilcrow">¶</a></p>
 <div id="generic-interface">
 <section id="section-1.1">
@@ -1237,7 +1237,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <a href="#section-1.1.1" class="section-number selfRef">1.1.1. </a><a href="#name-setup" class="section-name selfRef"><code>setup</code></a>
           </h4>
 <p id="section-1.1.1-1">On input the parameters <code>security_bits</code>, <code>num_vars</code>, <code>degree_bounds</code>, and an OPTIONAL randomness generator <code>rng</code>, <code>setup</code> samples a public <code>CommitterKey</code> and <code>VerifierKey</code> for the polynomial commitment scheme.
-  NON-NORMATIVE NOTE: This generalises over both trusted setups (SRS) and transparent setups<a href="#section-1.1.1-1" class="pilcrow">¶</a></p>
+  NON-NORMATIVE NOTE: This generalises over both trusted setups (SRS) and transparent setups.<a href="#section-1.1.1-1" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-1.1.1-2">
 <pre>
 fn setup(
@@ -1518,27 +1518,42 @@ fn batch_verify(
         <h3 id="name-ligero">
 <a href="#section-2.1" class="section-number selfRef">2.1. </a><a href="#name-ligero" class="section-name selfRef">Ligero <span class="cite xref">[AHIV17]</span></a>
         </h3>
-<p id="section-2.1-1">The Ligero <span>[<a href="#AHIV17" class="cite xref">AHIV17</a>]</span> proof system includes an implicit polynomial commitment scheme, described below for both the univariate and multi-linear settings.<a href="#section-2.1-1" class="pilcrow">¶</a></p>
-<div id="univariate-setting">
+<p id="section-2.1-1">The Ligero <span>[<a href="#AHIV17" class="cite xref">AHIV17</a>]</span> proof system can be used to instantiate a polynomial commitment scheme. It is parameterised over a collision-resistant hash function <code>Hash</code>.<a href="#section-2.1-1" class="pilcrow">¶</a></p>
+<p id="section-2.1-2">Both the <code>LigeroCommitterKey</code> and <code>LigeroVerifierKey</code> are the same type <code>LigeroParams</code>:<a href="#section-2.1-2" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-2.1-3">
+<pre>
+struct LigeroParams&lt;H: CRHScheme&gt; {
+    security_bits: usize,
+    code_rate: usize,
+}
+</pre><a href="#section-2.1-3" class="pilcrow">¶</a>
+</div>
+<div id="setup-1">
 <section id="section-2.1.1">
-          <h4 id="name-univariate-setting">
-<a href="#section-2.1.1" class="section-number selfRef">2.1.1. </a><a href="#name-univariate-setting" class="section-name selfRef">Univariate setting</a>
+          <h4 id="name-setup-2">
+<a href="#section-2.1.1" class="section-number selfRef">2.1.1. </a><a href="#name-setup-2" class="section-name selfRef"><code>setup</code></a>
           </h4>
-<p id="section-2.1.1-1">#### <code>setup</code>
-#### <code>commit</code>
-#### <code>open</code>
-#### <code>verify</code><a href="#section-2.1.1-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-2.1.1-1">
+<pre>
+fn setup(
+    security_bits: usize,
+    num_vars: usize,
+    degree_bounds: Vec&lt;usize&gt;,
+    rng: Option&lt;Rng&gt;,
+) -&gt; (CommitterKey, VerifierKey) {
+
+}
+</pre><a href="#section-2.1.1-1" class="pilcrow">¶</a>
+</div>
 </section>
 </div>
-<div id="multi-linear-setting">
+<div id="commit-1">
 <section id="section-2.1.2">
-          <h4 id="name-multi-linear-setting">
-<a href="#section-2.1.2" class="section-number selfRef">2.1.2. </a><a href="#name-multi-linear-setting" class="section-name selfRef">Multi-linear setting</a>
+          <h4 id="name-commit-2">
+<a href="#section-2.1.2" class="section-number selfRef">2.1.2. </a><a href="#name-commit-2" class="section-name selfRef"><code>commit</code></a>
           </h4>
-<p id="section-2.1.2-1">#### <code>setup</code>
-#### <code>commit</code>
-#### <code>open</code>
-#### <code>verify</code><a href="#section-2.1.2-1" class="pilcrow">¶</a></p>
+<p id="section-2.1.2-1">### <code>open</code>
+### <code>verify</code><a href="#section-2.1.2-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
