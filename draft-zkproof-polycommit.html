@@ -1048,7 +1048,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Lai</td>
-<td class="center">Expires 21 November 2025</td>
+<td class="center">Expires 22 November 2025</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1061,12 +1061,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-zkproof-polycommit-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2025-05-20" class="published">20 May 2025</time>
+<time datetime="2025-05-21" class="published">21 May 2025</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Informational</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2025-11-21">21 November 2025</time></dd>
+<dd class="expires"><time datetime="2025-11-22">22 November 2025</time></dd>
 <dt class="label-authors">Author:</dt>
 <dd class="authors">
 <div class="author">
@@ -1110,7 +1110,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 21 November 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 22 November 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1171,9 +1171,22 @@ svg :is([fill="white"], [fill^="#fff"]) {
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2">
             <p id="section-toc.1-1.2.1"><a href="#section-2" class="auto internal xref">2</a>.  <a href="#name-concrete-polynomial-commitm" class="internal xref">Concrete polynomial commitment schemes</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.1">
+                <p id="section-toc.1-1.2.2.1.1"><a href="#section-2.1" class="auto internal xref">2.1</a>.  <a href="#name-ligero" class="internal xref">Ligero AHIV17</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.1.2.1">
+                    <p id="section-toc.1-1.2.2.1.2.1.1"><a href="#section-2.1.1" class="auto internal xref">2.1.1</a>.  <a href="#name-univariate-setting" class="internal xref">Univariate setting</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.1.2.2">
+                    <p id="section-toc.1-1.2.2.1.2.2.1"><a href="#section-2.1.2" class="auto internal xref">2.1.2</a>.  <a href="#name-multi-linear-setting" class="internal xref">Multi-linear setting</a></p>
+</li>
+                </ul>
+</li>
+            </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3">
-            <p id="section-toc.1-1.3.1"><a href="#section-3" class="auto internal xref">3</a>.  <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
+            <p id="section-toc.1-1.3.1"><a href="#section-3" class="auto internal xref">3</a>.  <a href="#name-security-considerations-wip" class="internal xref">Security Considerations (WIP)</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4">
             <p id="section-toc.1-1.4.1"><a href="#section-4" class="auto internal xref">4</a>.  <a href="#name-iana-considerations" class="internal xref">IANA Considerations</a></p>
@@ -1329,7 +1342,7 @@ fn open(
 </li>
             <li class="normal" id="section-1.1.3-4.4">
               <p id="section-1.1.3-4.4.1"><code>challenge</code>: the evaluation point at which <code>com</code> will be opened; this consists of <code>num_vars</code> elements from the <code>ChallengeField</code>
-  NON-NORMATIVE NOTE: In the non-interactive setting, the challenge is derived from the commitment using the Fiat-Shamir transform.<a href="#section-1.1.3-4.4.1" class="pilcrow">¶</a></p>
+  NON-NORMATIVE NOTE: In the non-interactive setting, the challenge is derived from the commitment using the Fiat-Shamir transform <span>[<a href="#fiat-shamir" class="cite xref">fiat-shamir</a>]</span>.<a href="#section-1.1.3-4.4.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-1.1.3-4.5">
               <p id="section-1.1.3-4.5.1">(OPTIONAL) <code>r</code>: a random element from the <code>WitnessField</code>; this MUST equal the <code>r</code> previously used in <code>commit</code><a href="#section-1.1.3-4.5.1" class="pilcrow">¶</a></p>
@@ -1499,13 +1512,43 @@ fn batch_verify(
 <section id="section-2">
       <h2 id="name-concrete-polynomial-commitm">
 <a href="#section-2" class="section-number selfRef">2. </a><a href="#name-concrete-polynomial-commitm" class="section-name selfRef">Concrete polynomial commitment schemes</a>
-    </h2>
+      </h2>
+<div id="ligero-ahiv17">
+<section id="section-2.1">
+        <h3 id="name-ligero">
+<a href="#section-2.1" class="section-number selfRef">2.1. </a><a href="#name-ligero" class="section-name selfRef">Ligero <span class="cite xref">[AHIV17]</span></a>
+        </h3>
+<p id="section-2.1-1">The Ligero <span>[<a href="#AHIV17" class="cite xref">AHIV17</a>]</span> proof system includes an implicit polynomial commitment scheme, described below for both the univariate and multi-linear settings.<a href="#section-2.1-1" class="pilcrow">¶</a></p>
+<div id="univariate-setting">
+<section id="section-2.1.1">
+          <h4 id="name-univariate-setting">
+<a href="#section-2.1.1" class="section-number selfRef">2.1.1. </a><a href="#name-univariate-setting" class="section-name selfRef">Univariate setting</a>
+          </h4>
+<p id="section-2.1.1-1">#### <code>setup</code>
+#### <code>commit</code>
+#### <code>open</code>
+#### <code>verify</code><a href="#section-2.1.1-1" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="security-considerations">
+<div id="multi-linear-setting">
+<section id="section-2.1.2">
+          <h4 id="name-multi-linear-setting">
+<a href="#section-2.1.2" class="section-number selfRef">2.1.2. </a><a href="#name-multi-linear-setting" class="section-name selfRef">Multi-linear setting</a>
+          </h4>
+<p id="section-2.1.2-1">#### <code>setup</code>
+#### <code>commit</code>
+#### <code>open</code>
+#### <code>verify</code><a href="#section-2.1.2-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+</section>
+</div>
+<div id="security-considerations-wip">
 <section id="section-3">
-      <h2 id="name-security-considerations">
-<a href="#section-3" class="section-number selfRef">3. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
+      <h2 id="name-security-considerations-wip">
+<a href="#section-3" class="section-number selfRef">3. </a><a href="#name-security-considerations-wip" class="section-name selfRef">Security Considerations (WIP)</a>
     </h2>
 </section>
 </div>
@@ -1531,9 +1574,13 @@ fn batch_verify(
 <a href="#name-informative-references" class="section-name selfRef">Informative References</a>
       </h2>
 <dl class="references">
+<dt id="AHIV17">[AHIV17]</dt>
+      <dd>
+<span class="refAuthor">Ames, S.</span>, <span class="refAuthor">Hazay, C.</span>, <span class="refAuthor">Ishai, Y.</span>, and <span class="refAuthor">M. Venkitasubramaniam</span>, <span class="refTitle">"Ligero: Lightweight Sublinear Arguments Without a Trusted Setup"</span>, <time datetime="2017" class="refDate">2017</time>, <span>&lt;<a href="https://dl.acm.org/doi/10.1145/3133956.3134104">https://dl.acm.org/doi/10.1145/3133956.3134104</a>&gt;</span>. </dd>
+<dd class="break"></dd>
 <dt id="fiat-shamir">[fiat-shamir]</dt>
     <dd>
-<span class="refTitle">"draft-orru-zkproofs-fiat-shamir"</span>, <span>&lt;<a href="https://mmaker.github.io/spfs/draft-orru-zkproof-fiat-shamir.html">https://mmaker.github.io/spfs/draft-orru-zkproof-fiat-shamir.html</a>&gt;</span>. </dd>
+<span class="refTitle">"draft-orru-zkproofs-fiat-shamir"</span>, <span>&lt;<a href="https://mmaker.github.io/draft-zkproof-sigma-protocols/draft-orru-zkproof-fiat-shamir.html">https://mmaker.github.io/draft-zkproof-sigma-protocols/draft-orru-zkproof-fiat-shamir.html</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 </dl>
 </section>

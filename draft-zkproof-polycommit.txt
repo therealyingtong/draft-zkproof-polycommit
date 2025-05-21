@@ -3,9 +3,9 @@
 
 
 WG Working Group                                               Y. T. Lai
-Internet-Draft                                               20 May 2025
+Internet-Draft                                               21 May 2025
 Intended status: Informational                                          
-Expires: 21 November 2025
+Expires: 22 November 2025
 
 
                      Polynomial Commitment Schemes
@@ -47,7 +47,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 21 November 2025.
+   This Internet-Draft will expire on 22 November 2025.
 
 Copyright Notice
 
@@ -72,7 +72,10 @@ Table of Contents
        1.2.1.  batch_open
        1.2.2.  batch_verify
    2.  Concrete polynomial commitment schemes
-   3.  Security Considerations
+     2.1.  Ligero AHIV17
+       2.1.1.  Univariate setting
+       2.1.2.  Multi-linear setting
+   3.  Security Considerations (WIP)
    4.  IANA Considerations
    Acknowledgments
    Informative References
@@ -209,7 +212,8 @@ Table of Contents
    *  challenge: the evaluation point at which com will be opened; this
       consists of num_vars elements from the ChallengeField NON-
       NORMATIVE NOTE: In the non-interactive setting, the challenge is
-      derived from the commitment using the Fiat-Shamir transform.
+      derived from the commitment using the Fiat-Shamir transform
+      [fiat-shamir].
 
    *  (OPTIONAL) r: a random element from the WitnessField; this MUST
       equal the r previously used in commit
@@ -350,7 +354,21 @@ Table of Contents
 
 2.  Concrete polynomial commitment schemes
 
-3.  Security Considerations
+2.1.  Ligero [AHIV17]
+
+   The Ligero [AHIV17] proof system includes an implicit polynomial
+   commitment scheme, described below for both the univariate and multi-
+   linear settings.
+
+2.1.1.  Univariate setting
+
+   #### setup #### commit #### open #### verify
+
+2.1.2.  Multi-linear setting
+
+   #### setup #### commit #### open #### verify
+
+3.  Security Considerations (WIP)
 
 4.  IANA Considerations
 
@@ -364,10 +382,15 @@ Acknowledgments
 
 Informative References
 
+   [AHIV17]   Ames, S., Hazay, C., Ishai, Y., and M. Venkitasubramaniam,
+              "Ligero: Lightweight Sublinear Arguments Without a Trusted
+              Setup", 2017,
+              <https://dl.acm.org/doi/10.1145/3133956.3134104>.
+
    [fiat-shamir]
               "draft-orru-zkproofs-fiat-shamir",
-              <https://mmaker.github.io/spfs/draft-orru-zkproof-fiat-
-              shamir.html>.
+              <https://mmaker.github.io/draft-zkproof-sigma-protocols/
+              draft-orru-zkproof-fiat-shamir.html>.
 
 Author's Address
 
