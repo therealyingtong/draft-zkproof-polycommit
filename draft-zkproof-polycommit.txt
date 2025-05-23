@@ -3,9 +3,9 @@
 
 
 WG Working Group                                               Y. T. Lai
-Internet-Draft                                               21 May 2025
+Internet-Draft                                               23 May 2025
 Intended status: Informational                                          
-Expires: 22 November 2025
+Expires: 24 November 2025
 
 
                      Polynomial Commitment Schemes
@@ -47,7 +47,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 22 November 2025.
+   This Internet-Draft will expire on 24 November 2025.
 
 Copyright Notice
 
@@ -71,10 +71,12 @@ Table of Contents
      1.2.  Batched setting
        1.2.1.  batch_open
        1.2.2.  batch_verify
-   2.  Concrete polynomial commitment schemes
+   2.  Concrete polynomial commitment schemes (WIP)
      2.1.  Ligero AHIV17
        2.1.1.  setup
        2.1.2.  commit
+       2.1.3.  open
+       2.1.4.  verify
    3.  Security Considerations (WIP)
    4.  IANA Considerations
    Acknowledgments
@@ -166,7 +168,7 @@ Table of Contents
        ck: CommitterKey,
        poly: Polynomial<WitnessField>,
        r: Option<WitnessField>
-   ) -> Commitment
+   ) -> (Commitment, CommitmentState)
 
    *Input:*
 
@@ -186,6 +188,10 @@ Table of Contents
 
    *  com: a binding and optionally hiding polynomial commitment to poly
 
+   *  com_state: auxiliary state of the commitment, containing
+      information that can be re-used by the committer during the
+      opening phase, such as the commitment randomness.
+
 1.1.3.  open
 
    On input the committer key ck, a polynomial poly, a commitment com to
@@ -199,9 +205,10 @@ Table of Contents
        ck: CommitterKey,
        poly: Polynomial<WitnessField>,
        com: Commitment,
+       com_state: CommitmentState,
        challenge: Challenge,
        r: Option<WitnessField>
-   ) -> (ChallengeField, Proof)
+   ) -> Proof
 
    *Input:*
 
@@ -211,6 +218,8 @@ Table of Contents
       each variable
 
    *  com: a commitment to poly
+
+   *  com_state: auxiliary state of the commitment
 
    *  challenge: the evaluation point at which com will be opened; this
       consists of num_vars elements from the ChallengeField NON-
@@ -222,8 +231,6 @@ Table of Contents
       equal the r previously used in commit
 
    *Output:*
-
-   *  eval: the evaluation of poly at the evaluation point challenge
 
    *  proof: an opening proof attesting to the correctness of the
       opening
@@ -355,36 +362,103 @@ Table of Contents
    *  batch_verify outputs true if the opening proof is valid, and false
       otherwise
 
-2.  Concrete polynomial commitment schemes
+2.  Concrete polynomial commitment schemes (WIP)
 
 2.1.  Ligero [AHIV17]
 
    The Ligero [AHIV17] proof system can be used to instantiate a
    polynomial commitment scheme.  It is parameterised over a collision-
-   resistant hash function Hash.
+   resistant hash function CRHScheme.  The following interface is
+   adapted from the arkworks library [arkworks].
 
    Both the LigeroCommitterKey and LigeroVerifierKey are the same type
    LigeroParams:
 
-   struct LigeroParams<H: CRHScheme> {
+   struct LigeroParams<CRHScheme> {
        security_bits: usize,
+       /// The rate of the Reed-Solomon code.
        code_rate: usize,
    }
 
 2.1.1.  setup
 
-   fn setup(
+   fn setup<CRHScheme>(
        security_bits: usize,
-       num_vars: usize,
-       degree_bounds: Vec<usize>,
-       rng: Option<Rng>,
-   ) -> (CommitterKey, VerifierKey) {
-
+       _num_vars: usize,
+       _degree_bounds: Vec<usize>,
+       _rng: Option<Rng>,
+   ) -> (CommitterKey<CRHScheme>, VerifierKey<CRHScheme>) {
+       let ck = LigeroParams<CRHScheme> {
+           security_bits,
+           code_rate = 4
+       };
+       let vk = LigeroParams<CRHScheme> {
+           security_bits,
+           code_rate = 4
+       };
+       (ck, vk)
    }
 
 2.1.2.  commit
 
-   ### open ### verify
+   fn commit(
+       ck: CommitterKey,
+       poly: Polynomial<WitnessField>,
+       r: Option<WitnessField>
+   ) -> (Commitment, CommitmentState) {
+       // 1. Arrange the coefficients of the polynomial into a matrix,
+       // and apply encoding to get `ext_mat`.
+
+       // 2. Create the Merkle tree from the hashes of each column.
+
+       // 3. Obtain the MT root
+
+       (commitment, leaves)
+   }
+
+2.1.3.  open
+
+  fn open(
+      ck: CommitterKey,
+      poly: Polynomial<WitnessField>,
+      com: Commitment,
+      com_state: CommitmentState,
+      challenge: Challenge,
+      r: Option<WitnessField>
+  ) -> Proof {
+      // 1. Create the Merkle tree from the hashes of each column.
+
+      // 2. Generate vector `b` to left-multiply the matrix.
+
+      // 3. left-multiply the matrix by `b`.
+
+      // 4. Generate t column indices to test the linear combination on.
+
+      // 5. Compute Merkle tree paths for the requested columns.
+  }
+
+2.1.4.  verify
+
+fn verify(
+    vk: VerifierKey,
+    com: Commitment,
+    challenge: Challenge,
+    eval: ChallengeField,
+    proof: Proof,
+) -> bool {
+    // 1. Ask random oracle for the `t` indices where the checks happen.
+
+    // 2. Hash the received columns into leaf hashes.
+
+    // 3. Verify the paths for each of the leaf hashes - this is only run once,
+
+    // 4. Compute the encoding w = E(v).
+
+    // 5. Compute `a`, `b` to right- and left- multiply with the matrix `M`.
+
+    // 6. Probabilistic checks that whatever the prover sent,
+    // matches with what the verifier computed for himself.
+}
 
 3.  Security Considerations (WIP)
 
@@ -404,6 +478,8 @@ Informative References
               "Ligero: Lightweight Sublinear Arguments Without a Trusted
               Setup", 2017,
               <https://dl.acm.org/doi/10.1145/3133956.3134104>.
+
+   [arkworks] "arkworks zkSNARK ecosystem", <https://arkworks.rs>.
 
    [fiat-shamir]
               "draft-orru-zkproofs-fiat-shamir",
