@@ -3,9 +3,9 @@
 
 
 WG Working Group                                               Y. T. Lai
-Internet-Draft                                               23 May 2025
+Internet-Draft                                         26 September 2025
 Intended status: Informational                                          
-Expires: 24 November 2025
+Expires: 30 March 2026
 
 
                      Polynomial Commitment Schemes
@@ -47,7 +47,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 24 November 2025.
+   This Internet-Draft will expire on 30 March 2026.
 
 Copyright Notice
 
